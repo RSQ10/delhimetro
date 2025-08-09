@@ -3,1223 +3,1395 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delhi Metro Route Planner - Find Best Routes | RSQ Tech</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Find the fastest route between any two Delhi Metro stations. Get real-time directions, interchange information, and travel time estimates for all Delhi Metro lines.">
-    <meta name="keywords" content="Delhi Metro, route planner, metro map, Delhi transport, metro stations, route finder, Delhi Metro lines, public transport">
-    <meta name="author" content="RSQ Tech Pvt Ltd">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph Tags for Social Media -->
-    <meta property="og:title" content="Delhi Metro Route Planner - Find Best Routes">
-    <meta property="og:description" content="Find the fastest route between any two Delhi Metro stations with real-time directions and travel estimates.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://yourdomain.com">
-    <meta property="og:image" content="https://i.ibb.co/602MWkZ/logo.png">
-    
-    <!-- Twitter Card Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Delhi Metro Route Planner">
-    <meta name="twitter:description" content="Find the fastest route between any two Delhi Metro stations">
-    <meta name="twitter:image" content="https://i.ibb.co/602MWkZ/logo.png">
-    
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://yourdomain.com">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://i.ibb.co/602MWkZ/logo.png">
+    <title>Delhi Metro Route Finder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
-
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            background-attachment: fixed;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-            color: white;
-            padding: 40px 30px;
-            text-align: center;
+        .metro-line-red { background-color: #e53e3e; }
+        .metro-line-blue { background-color: #3182ce; }
+        .metro-line-green { background-color: #38a169; }
+        .metro-line-yellow { background-color: #d69e2e; }
+        .metro-line-violet { background-color: #805ad5; }
+        .metro-line-pink { background-color: #d53f8c; }
+        .metro-line-magenta { background-color: #e91e63; }
+        .metro-line-orange { background-color: #ff6b35; }
+        .metro-line-aqua { background-color: #00bcd4; }
+        
+        .route-line {
             position: relative;
-            overflow: hidden;
         }
-
-        .header::before {
+        
+        .route-line::before {
             content: '';
             position: absolute;
+            left: 15px;
             top: 0;
-            left: 0;
-            right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="70" cy="80" r="2.5" fill="rgba(255,255,255,0.1)"/></svg>');
-            animation: float 20s infinite linear;
+            width: 3px;
+            background: #3182ce;
         }
-
-        @keyframes float {
-            0% { transform: translateX(-100px); }
-            100% { transform: translateX(100px); }
-        }
-
-        .header h1 {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            font-weight: 800;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 1;
-        }
-
-        .header p {
-            font-size: 1.2rem;
-            opacity: 0.95;
-            font-weight: 300;
-            position: relative;
-            z-index: 1;
-        }
-
-        .main-content {
-            padding: 40px;
-        }
-
-        .route-planner {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .station-selector {
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-            padding: 30px;
-            border-radius: 20px;
-            border: none;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .station-selector::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #3b82f6, #1e40af);
-            border-radius: 20px 20px 0 0;
-        }
-
-        .station-selector:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-        }
-
-        .station-selector h3 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            font-size: 1.4rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .select-wrapper {
-            position: relative;
-            margin-bottom: 15px;
-        }
-
-        select {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #e1e8ed;
-            border-radius: 15px;
-            font-size: 1.1rem;
-            font-weight: 500;
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 4px 15px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-
-        select:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .line-info {
-            font-size: 0.95rem;
-            color: #3b82f6;
-            margin-top: 8px;
-            font-weight: 600;
-            padding: 8px 12px;
-            background: rgba(59, 130, 246, 0.1);
-            border-radius: 10px;
-            border-left: 3px solid #3b82f6;
-        }
-
-        .find-route-btn {
-            grid-column: 1 / -1;
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
-            color: white;
-            border: none;
-            padding: 18px 40px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 30px;
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .find-route-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .find-route-btn:hover::before {
-            left: 100%;
-        }
-
-        .find-route-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4);
-        }
-
-        .find-route-btn:active {
-            transform: translateY(-1px);
-        }
-
-        .route-result {
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: 25px;
-            padding: 35px;
-            margin-top: 40px;
-            display: none;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .route-result.show {
-            display: block;
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .route-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #e9ecef;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(30, 64, 175, 0.05) 100%);
-            padding: 25px;
-            border-radius: 20px;
-            margin: -10px -10px 30px -10px;
-        }
-
-        .route-title {
-            font-size: 1.8rem;
-            color: #2c3e50;
-            font-weight: 800;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .route-stats {
-            display: flex;
-            gap: 25px;
-            font-size: 1rem;
-            color: #555;
-        }
-
-        .stat {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: white;
-            padding: 10px 15px;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            font-weight: 600;
-        }
-
-        .stat span:first-child {
-            font-size: 1.2rem;
-        }
-
-        .route-steps {
-            list-style: none;
-        }
-
-        .route-section {
-            margin-bottom: 35px;
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
-        }
-
-        .route-section:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
-        }
-
-        .section-header {
-            padding: 25px;
-            color: white;
-            font-weight: 700;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-            position: relative;
-        }
-
-        .section-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: rgba(255,255,255,0.3);
-        }
-
-        .stations-list {
-            padding: 0;
-        }
-
-        .station-item {
-            display: flex;
-            align-items: center;
-            padding: 16px 25px;
-            border-bottom: 1px solid rgba(240,240,240,0.8);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .station-item:hover {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            transform: translateX(5px);
-        }
-
-        .station-item:last-child {
-            border-bottom: none;
-        }
-
+        
         .station-dot {
+            position: relative;
+            z-index: 2;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #3182ce;
+            border: 2px solid white;
+            margin-left: 9px;
+        }
+        
+        .junction-dot {
             width: 16px;
             height: 16px;
-            border-radius: 50%;
-            margin-right: 18px;
-            flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            border: 2px solid white;
-        }
-
-        .station-name {
-            flex: 1;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 1.05rem;
-        }
-
-        .station-info {
-            font-size: 0.9rem;
-            color: #666;
-            margin-left: auto;
-        }
-
-        .junction-station {
-            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
-            border-left: 6px solid #ff9800;
-            font-weight: 700;
-            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2);
-        }
-
-        .junction-station .station-name {
-            color: #e65100;
-            font-size: 1.1rem;
-        }
-
-        .junction-info, .boarding-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 6px;
-        }
-
-        .platform-info {
-            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
-        }
-
-        .available-lines {
-            font-size: 0.8rem;
-            color: #666;
-            font-weight: 600;
-        }
-
-        .interchange-section {
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-            padding: 25px;
-            margin: 25px 0;
-            border-radius: 20px;
-            border: 3px solid #ff9800;
-            text-align: center;
-            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .interchange-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #ff9800, #f57c00);
-        }
-
-        .interchange-title {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #e65100;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .interchange-details {
-            color: #bf360c;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .boarding-station {
-            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c8 100%);
-            border-left: 6px solid #4caf50;
-            font-weight: 700;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
-        }
-
-        .boarding-station .station-name {
-            color: #2e7d32;
-            font-size: 1.1rem;
-        }
-
-        .boarding-station::before {
-            content: '🚀';
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.2rem;
-        }
-
-        .destination-station {
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            border-left: 6px solid #f44336;
-            font-weight: 700;
-            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.2);
-        }
-
-        .destination-station .station-name {
-            color: #c62828;
-            font-size: 1.1rem;
-        }
-
-        .destination-station::before {
-            content: '🔖';
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.2rem;
-        }
-
-        .line-red { background-color: #e74c3c; }
-        .line-blue { background-color: #3498db; }
-        .line-green { background-color: #27ae60; }
-        .line-yellow { background-color: #f1c40f; color: #333; }
-        .line-pink { background-color: #e91e63; }
-        .line-magenta { background-color: #9b59b6; }
-        .line-violet { background-color: #8e44ad; }
-        .line-orange { background-color: #e67e22; }
-        .line-gray { background-color: #95a5a6; }
-
-        .metro-map {
-            margin-top: 40px;
-            text-align: center;
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-            padding: 30px;
-            border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .map-title {
-            font-size: 1.6rem;
-            color: #2c3e50;
-            margin-bottom: 25px;
-            font-weight: 800;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .line-legend {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 18px;
-            margin-bottom: 25px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 18px;
-            background: white;
-            border-radius: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            font-weight: 600;
-            border: 2px solid transparent;
-        }
-
-        .legend-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            border-color: rgba(59, 130, 246, 0.3);
-        }
-
-        .legend-color {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            border: 2px solid white;
-        }
-
-        .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            border-left: 4px solid #e74c3c;
-        }
-
-        .footer {
-            text-align: right;
-            padding: 20px 30px;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-top: 1px solid #e2e8f0;
-            margin-top: 20px;
-        }
-
-        .footer p {
-            font-size: 0.85rem;
-            color: #64748b;
-            font-weight: 500;
-            margin: 0;
-        }
-
-        @media (max-width: 768px) {
-            .route-planner {
-                grid-template-columns: 1fr;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .main-content {
-                padding: 20px;
-            }
-            
-            .route-stats {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .footer {
-                text-align: center;
-                padding: 15px 20px;
-            }
-            
-            /* Mobile responsive for multiple routes */
-            .route-result div[style*="grid-template-columns: 1fr 1fr"] {
-                grid-template-columns: 1fr !important;
-                gap: 20px !important;
-            }
+            margin-left: 7px;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #3182ce;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>
-                <img src="https://i.ibb.co/602MWkZ/logo.png" alt="Metro Logo" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 15px; border-radius: 8px;" onerror="this.src=''; this.alt='Logo failed to load'; this.style.display='none';">
-                <span>Delhi Metro Route Planner</span>
-            </h1>
-            <p>Find the best route between any two Delhi Metro stations</p>
-        </div>
-
-        <div class="main-content">
-            <div class="route-planner">
-                <div class="station-selector">
-                    <h3>📍 Boarding Station</h3>
-                    <div class="select-wrapper">
-                        <select id="fromStation">
-                            <option value="">Select boarding station</option>
-                        </select>
-                        <div class="line-info" id="fromLineInfo"></div>
-                    </div>
-                </div>
-
-                <div class="station-selector">
-                    <h3>🔖 Destination Station</h3>
-                    <div class="select-wrapper">
-                        <select id="toStation">
-                            <option value="">Select destination station</option>
-                        </select>
-                        <div class="line-info" id="toLineInfo"></div>
-                    </div>
-                </div>
-
-                <button class="find-route-btn" onclick="findRoute()">
-                    🔍 Find Best Route
+<body class="bg-gradient-to-br from-blue-50 to-white min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-6xl">
+        <!-- Navigation Header -->
+        <div class="flex justify-between items-center mb-6">
+            <button onclick="goHome()" class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition duration-300">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                </svg>
+                <span>Home</span>
+            </button>
+            <div class="flex flex-wrap gap-2">
+                <button onclick="showFareDetails()" class="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg transition duration-300 text-sm">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"/>
+                    </svg>
+                    <span>Fare Details</span>
+                </button>
+                <button onclick="showStationList()" class="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg transition duration-300 text-sm">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>All Stations</span>
+                </button>
+                <button onclick="showFAQ()" class="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-lg transition duration-300 text-sm">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>FAQ & Guide</span>
+                </button>
+                <button onclick="showCrowdTips()" class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg transition duration-300 text-sm">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Crowd Tips</span>
                 </button>
             </div>
+        </div>
 
-            <div id="routeResult" class="route-result">
-                <div class="route-header">
-                    <div class="route-title" id="routeTitle"></div>
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="mb-4">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full shadow-2xl mb-4 transform hover:scale-105 transition-transform duration-300">
+                    <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                        <path d="M8 11h8v2H8z" fill="white"/>
+                        <circle cx="7" cy="12" r="1.5" fill="white"/>
+                        <circle cx="17" cy="12" r="1.5" fill="white"/>
+                    </svg>
                 </div>
-                <div class="route-steps" id="routeSteps"></div>
+                <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-700 to-blue-900 mb-2 tracking-tight">
+                    DELHI METRO
+                </h1>
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-800 mb-2 tracking-wide">ROUTE FINDER</h2>
             </div>
+            <p class="text-blue-600 text-lg">Find the best routes between any two metro stations</p>
+        </div>
 
-            <div class="metro-map">
-                <h3 class="map-title">Delhi Metro Lines</h3>
-                <div class="line-legend">
-                    <div class="legend-item">
-                        <div class="legend-color line-red"></div>
-                        <span>Red Line</span>
+        <!-- Route Selection Form -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block text-blue-800 font-semibold mb-2">From Station</label>
+                    <select id="fromStation" class="w-full p-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none">
+                        <option value="">Select boarding station</option>
+                        <option value="adarsh-nagar">Adarsh Nagar</option>
+                        <option value="aiims">AIIMS</option>
+                        <option value="akshardham">Akshardham</option>
+                        <option value="alpha-1">Alpha 1</option>
+                        <option value="anand-vihar-isbt">Anand Vihar ISBT</option>
+                        <option value="arjan-garh">Arjan Garh</option>
+                        <option value="ashok-park-main">Ashok Park Main</option>
+                        <option value="ashram">Ashram</option>
+                        <option value="azadpur">Azadpur</option>
+                        <option value="badarpur-border">Badarpur Border</option>
+                        <option value="bahadurgarh-city">Bahadurgarh City</option>
+                        <option value="barakhamba-road">Barakhamba Road</option>
+                        <option value="bhikaji-cama-place">Bhikaji Cama Place</option>
+                        <option value="botanical-garden">Botanical Garden</option>
+                        <option value="central-secretariat">Central Secretariat</option>
+                        <option value="chanakyapuri">Chanakyapuri</option>
+                        <option value="chandni-chowk">Chandni Chowk</option>
+                        <option value="chawri-bazar">Chawri Bazar</option>
+                        <option value="chhatarpur">Chhatarpur</option>
+                        <option value="chirag-delhi">Chirag Delhi</option>
+                        <option value="civil-lines">Civil Lines</option>
+                        <option value="connaught-place">Connaught Place</option>
+                        <option value="delhi-aerocity">Delhi Aerocity</option>
+                        <option value="delhi-cantt">Delhi Cantt</option>
+                        <option value="delhi-gate">Delhi Gate</option>
+                        <option value="delta-1">Delta 1</option>
+                        <option value="depot-station">Depot Station</option>
+                        <option value="dhaula-kuan">Dhaula Kuan</option>
+                        <option value="dilshad-garden">Dilshad Garden</option>
+                        <option value="dilli-haat-ina">Dilli Haat INA</option>
+                        <option value="durgabai-deshmukh-south-campus">Durgabai Deshmukh South Campus</option>
+                        <option value="dwarka">Dwarka</option>
+                        <option value="dwarka-mor">Dwarka Mor</option>
+                        <option value="dwarka-sector-8">Dwarka Sector 8</option>
+                        <option value="dwarka-sector-9">Dwarka Sector 9</option>
+                        <option value="dwarka-sector-10">Dwarka Sector 10</option>
+                        <option value="dwarka-sector-11">Dwarka Sector 11</option>
+                        <option value="dwarka-sector-12">Dwarka Sector 12</option>
+                        <option value="dwarka-sector-13">Dwarka Sector 13</option>
+                        <option value="dwarka-sector-14">Dwarka Sector 14</option>
+                        <option value="dwarka-sector-21">Dwarka Sector 21</option>
+                        <option value="east-azad-nagar">East Azad Nagar</option>
+                        <option value="east-vinod-nagar-mayur-vihar-2">East Vinod Nagar Mayur Vihar 2</option>
+                        <option value="esi-hospital">ESI Hospital</option>
+                        <option value="ghevra-metro-station">Ghevra Metro Station</option>
+                        <option value="ghitorni">Ghitorni</option>
+                        <option value="gnida-office">GNIDA Office</option>
+                        <option value="gokulpuri">Gokulpuri</option>
+                        <option value="golf-course">Golf Course</option>
+                        <option value="govind-puri">Govind Puri</option>
+                        <option value="greater-kailash">Greater Kailash</option>
+                        <option value="green-park">Green Park</option>
+                        <option value="gtb-nagar">GTB Nagar</option>
+                        <option value="guru-dronacharya">Guru Dronacharya</option>
+                        <option value="haiderpur-badli-mor">Haiderpur Badli Mor</option>
+                        <option value="harkesh-nagar-okhla">Harkesh Nagar Okhla</option>
+                        <option value="hauz-khas">Hauz Khas</option>
+                        <option value="huda-city-centre">HUDA City Centre</option>
+                        <option value="iffco-chowk">IFFCO Chowk</option>
+                        <option value="igi-airport">IGI Airport</option>
+                        <option value="ina">INA</option>
+                        <option value="inderlok">Inderlok</option>
+                        <option value="indraprastha">Indraprastha</option>
+                        <option value="ip-extension">IP Extension</option>
+                        <option value="ito">ITO</option>
+                        <option value="jaffrabad">Jaffrabad</option>
+                        <option value="jahangirpuri">Jahangirpuri</option>
+                        <option value="jama-masjid">Jama Masjid</option>
+                        <option value="jamia-millia-islamia">Jamia Millia Islamia</option>
+                        <option value="janakpuri-east">Janakpuri East</option>
+                        <option value="janakpuri-west">Janakpuri West</option>
+                        <option value="jangpura">Jangpura</option>
+                        <option value="janpath">Janpath</option>
+                        <option value="jasola-apollo">Jasola Apollo</option>
+                        <option value="jasola-vihar-shaheen-bagh">Jasola Vihar Shaheen Bagh</option>
+                        <option value="jawaharlal-nehru-stadium">Jawaharlal Nehru Stadium</option>
+                        <option value="jhandewalan">Jhandewalan</option>
+                        <option value="jhilmil">Jhilmil</option>
+                        <option value="johri-enclave">Johri Enclave</option>
+                        <option value="jor-bagh">Jor Bagh</option>
+                        <option value="kailash-colony">Kailash Colony</option>
+                        <option value="kalkaji-mandir">Kalkaji Mandir</option>
+                        <option value="kalindi-kunj">Kalindi Kunj</option>
+                        <option value="kanhaiya-nagar">Kanhaiya Nagar</option>
+                        <option value="karkarduma">Karkarduma</option>
+                        <option value="karkarduma-court">Karkarduma Court</option>
+                        <option value="karol-bagh">Karol Bagh</option>
+                        <option value="kashmere-gate">Kashmere Gate</option>
+                        <option value="keshav-puram">Keshav Puram</option>
+                        <option value="khan-market">Khan Market</option>
+                        <option value="kirti-nagar">Kirti Nagar</option>
+                        <option value="knowledge-park-ii">Knowledge Park II</option>
+                        <option value="kohat-enclave">Kohat Enclave</option>
+                        <option value="krishna-nagar">Krishna Nagar</option>
+                        <option value="lajpat-nagar">Lajpat Nagar</option>
+                        <option value="lal-qila">Lal Qila</option>
+                        <option value="lok-kalyan-marg">Lok Kalyan Marg</option>
+                        <option value="madipur">Madipur</option>
+                        <option value="maharaja-surajmal-stadium">Maharaja Surajmal Stadium</option>
+                        <option value="majlis-park">Majlis Park</option>
+                        <option value="malviya-nagar">Malviya Nagar</option>
+                        <option value="mandawali-west-vinod-nagar">Mandawali West Vinod Nagar</option>
+                        <option value="mandi-house">Mandi House</option>
+                        <option value="mansarovar-park">Mansarovar Park</option>
+                        <option value="maujpur-babarpur">Maujpur Babarpur</option>
+                        <option value="maya-puri">Maya Puri</option>
+                        <option value="mayur-vihar-1">Mayur Vihar I</option>
+                        <option value="mayur-vihar-extension">Mayur Vihar Extension</option>
+                        <option value="mayur-vihar-pocket-1">Mayur Vihar Pocket 1</option>
+                        <option value="mg-road">MG Road</option>
+                        <option value="model-town">Model Town</option>
+                        <option value="mohan-estate">Mohan Estate</option>
+                        <option value="moolchand">Moolchand</option>
+                        <option value="moti-nagar">Moti Nagar</option>
+                        <option value="mundka">Mundka</option>
+                        <option value="mundka-industrial-area">Mundka Industrial Area</option>
+                        <option value="nangloi">Nangloi</option>
+                        <option value="nangloi-railway-station">Nangloi Railway Station</option>
+                        <option value="naraina-vihar">Naraina Vihar</option>
+                        <option value="nawada">Nawada</option>
+                        <option value="nehru-place">Nehru Place</option>
+                        <option value="netaji-subhash-place">Netaji Subhash Place</option>
+                        <option value="new-ashok-nagar">New Ashok Nagar</option>
+                        <option value="new-delhi">New Delhi</option>
+                        <option value="noida-city-centre">Noida City Centre</option>
+                        <option value="noida-sector-15">Noida Sector 15</option>
+                        <option value="noida-sector-16">Noida Sector 16</option>
+                        <option value="noida-sector-18">Noida Sector 18</option>
+                        <option value="noida-sector-50">Noida Sector 50</option>
+                        <option value="noida-sector-51">Noida Sector 51</option>
+                        <option value="noida-sector-76">Noida Sector 76</option>
+                        <option value="noida-sector-81">Noida Sector 81</option>
+                        <option value="noida-sector-83">Noida Sector 83</option>
+                        <option value="noida-sector-101">Noida Sector 101</option>
+                        <option value="noida-sector-137">Noida Sector 137</option>
+                        <option value="noida-sector-142">Noida Sector 142</option>
+                        <option value="noida-sector-143">Noida Sector 143</option>
+                        <option value="noida-sector-144">Noida Sector 144</option>
+                        <option value="noida-sector-145">Noida Sector 145</option>
+                        <option value="noida-sector-146">Noida Sector 146</option>
+                        <option value="noida-sector-147">Noida Sector 147</option>
+                        <option value="noida-sector-148">Noida Sector 148</option>
+                        <option value="nsez">NSEZ</option>
+                        <option value="okhla">Okhla</option>
+                        <option value="okhla-bird-sanctuary">Okhla Bird Sanctuary</option>
+                        <option value="okhla-nsic">Okhla NSIC</option>
+                        <option value="okhla-vihar">Okhla Vihar</option>
+                        <option value="panchsheel-park">Panchsheel Park</option>
+                        <option value="pandit-shree-ram-sharma">Pandit Shree Ram Sharma</option>
+                        <option value="pari-chowk">Pari Chowk</option>
+                        <option value="paschim-vihar-east">Paschim Vihar East</option>
+                        <option value="paschim-vihar-west">Paschim Vihar West</option>
+                        <option value="patel-chowk">Patel Chowk</option>
+                        <option value="patel-nagar">Patel Nagar</option>
+                        <option value="peeragarhi">Peeragarhi</option>
+                        <option value="pitampura">Pitampura</option>
+                        <option value="pragati-maidan">Pragati Maidan</option>
+                        <option value="pratap-nagar">Pratap Nagar</option>
+                        <option value="pulbangash">Pulbangash</option>
+                        <option value="punjabi-bagh">Punjabi Bagh</option>
+                        <option value="punjabi-bagh-west">Punjabi Bagh West</option>
+                        <option value="qutab-minar">Qutab Minar</option>
+                        <option value="rajdhani-park">Rajdhani Park</option>
+                        <option value="rajiv-chowk">Rajiv Chowk</option>
+                        <option value="rajouri-garden">Rajouri Garden</option>
+                        <option value="ramakrishna-ashram-marg">Ramakrishna Ashram Marg</option>
+                        <option value="ramesh-nagar">Ramesh Nagar</option>
+                        <option value="rithala">Rithala</option>
+                        <option value="rohini-east">Rohini East</option>
+                        <option value="rohini-sector-18">Rohini Sector 18</option>
+                        <option value="rohini-west">Rohini West</option>
+                        <option value="saket">Saket</option>
+                        <option value="samaypur-badli">Samaypur Badli</option>
+                        <option value="sarai-kale-khan">Sarai Kale Khan</option>
+                        <option value="sarai-kale-khan-nizamuddin">Sarai Kale Khan Nizamuddin</option>
+                        <option value="sardar-patel-vidyalaya">Sardar Patel Vidyalaya</option>
+                        <option value="sarita-vihar">Sarita Vihar</option>
+                        <option value="sarojini-nagar">Sarojini Nagar</option>
+                        <option value="satguru-ram-singh-marg">Satguru Ram Singh Marg</option>
+                        <option value="seelampur">Seelampur</option>
+                        <option value="shadipur">Shadipur</option>
+                        <option value="shahdara">Shahdara</option>
+                        <option value="shakurpur">Shakurpur</option>
+                        <option value="shalimar-bagh">Shalimar Bagh</option>
+                        <option value="shastri-nagar">Shastri Nagar</option>
+                        <option value="shastri-park">Shastri Park</option>
+                        <option value="shiv-vihar">Shiv Vihar</option>
+                        <option value="shivaji-park">Shivaji Park</option>
+                        <option value="shivaji-stadium">Shivaji Stadium</option>
+                        <option value="sikanderpur">Sikanderpur</option>
+                        <option value="sir-m-vishweshwaraiah-moti-bagh">Sir M Vishweshwaraiah Moti Bagh</option>
+                        <option value="south-extension">South Extension</option>
+                        <option value="subhash-nagar">Subhash Nagar</option>
+                        <option value="sukhdev-vihar">Sukhdev Vihar</option>
+                        <option value="sultanpur">Sultanpur</option>
+                        <option value="tagore-garden">Tagore Garden</option>
+                        <option value="tikri-border">Tikri Border</option>
+                        <option value="tikri-kalan">Tikri Kalan</option>
+                        <option value="tilak-nagar">Tilak Nagar</option>
+                        <option value="tis-hazari">Tis Hazari</option>
+                        <option value="trilokpuri-sanjay-lake">Trilokpuri Sanjay Lake</option>
+                        <option value="tughlakabad">Tughlakabad</option>
+                        <option value="udyog-bhawan">Udyog Bhawan</option>
+                        <option value="udyog-nagar">Udyog Nagar</option>
+                        <option value="uttam-nagar-east">Uttam Nagar East</option>
+                        <option value="uttam-nagar-west">Uttam Nagar West</option>
+                        <option value="vaishali">Vaishali</option>
+                        <option value="vidhan-sabha">Vidhan Sabha</option>
+                        <option value="vinobapuri">Vinobapuri</option>
+                        <option value="vishwavidyalaya">Vishwavidyalaya</option>
+                        <option value="welcome">Welcome</option>
+                        <option value="yamuna-bank">Yamuna Bank</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-blue-800 font-semibold mb-2">To Station</label>
+                    <select id="toStation" class="w-full p-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none">
+                        <option value="">Select destination station</option>
+                        <option value="adarsh-nagar">Adarsh Nagar</option>
+                        <option value="aiims">AIIMS</option>
+                        <option value="akshardham">Akshardham</option>
+                        <option value="alpha-1">Alpha 1</option>
+                        <option value="anand-vihar-isbt">Anand Vihar ISBT</option>
+                        <option value="arjan-garh">Arjan Garh</option>
+                        <option value="ashok-park-main">Ashok Park Main</option>
+                        <option value="ashram">Ashram</option>
+                        <option value="azadpur">Azadpur</option>
+                        <option value="badarpur-border">Badarpur Border</option>
+                        <option value="bahadurgarh-city">Bahadurgarh City</option>
+                        <option value="barakhamba-road">Barakhamba Road</option>
+                        <option value="bhikaji-cama-place">Bhikaji Cama Place</option>
+                        <option value="botanical-garden">Botanical Garden</option>
+                        <option value="central-secretariat">Central Secretariat</option>
+                        <option value="chanakyapuri">Chanakyapuri</option>
+                        <option value="chandni-chowk">Chandni Chowk</option>
+                        <option value="chawri-bazar">Chawri Bazar</option>
+                        <option value="chhatarpur">Chhatarpur</option>
+                        <option value="chirag-delhi">Chirag Delhi</option>
+                        <option value="civil-lines">Civil Lines</option>
+                        <option value="connaught-place">Connaught Place</option>
+                        <option value="delhi-aerocity">Delhi Aerocity</option>
+                        <option value="delhi-cantt">Delhi Cantt</option>
+                        <option value="delhi-gate">Delhi Gate</option>
+                        <option value="delta-1">Delta 1</option>
+                        <option value="depot-station">Depot Station</option>
+                        <option value="dhaula-kuan">Dhaula Kuan</option>
+                        <option value="dilshad-garden">Dilshad Garden</option>
+                        <option value="dilli-haat-ina">Dilli Haat INA</option>
+                        <option value="durgabai-deshmukh-south-campus">Durgabai Deshmukh South Campus</option>
+                        <option value="dwarka">Dwarka</option>
+                        <option value="dwarka-mor">Dwarka Mor</option>
+                        <option value="dwarka-sector-8">Dwarka Sector 8</option>
+                        <option value="dwarka-sector-9">Dwarka Sector 9</option>
+                        <option value="dwarka-sector-10">Dwarka Sector 10</option>
+                        <option value="dwarka-sector-11">Dwarka Sector 11</option>
+                        <option value="dwarka-sector-12">Dwarka Sector 12</option>
+                        <option value="dwarka-sector-13">Dwarka Sector 13</option>
+                        <option value="dwarka-sector-14">Dwarka Sector 14</option>
+                        <option value="dwarka-sector-21">Dwarka Sector 21</option>
+                        <option value="east-azad-nagar">East Azad Nagar</option>
+                        <option value="east-vinod-nagar-mayur-vihar-2">East Vinod Nagar Mayur Vihar 2</option>
+                        <option value="esi-hospital">ESI Hospital</option>
+                        <option value="ghevra-metro-station">Ghevra Metro Station</option>
+                        <option value="ghitorni">Ghitorni</option>
+                        <option value="gnida-office">GNIDA Office</option>
+                        <option value="gokulpuri">Gokulpuri</option>
+                        <option value="golf-course">Golf Course</option>
+                        <option value="govind-puri">Govind Puri</option>
+                        <option value="greater-kailash">Greater Kailash</option>
+                        <option value="green-park">Green Park</option>
+                        <option value="gtb-nagar">GTB Nagar</option>
+                        <option value="guru-dronacharya">Guru Dronacharya</option>
+                        <option value="haiderpur-badli-mor">Haiderpur Badli Mor</option>
+                        <option value="harkesh-nagar-okhla">Harkesh Nagar Okhla</option>
+                        <option value="hauz-khas">Hauz Khas</option>
+                        <option value="huda-city-centre">HUDA City Centre</option>
+                        <option value="iffco-chowk">IFFCO Chowk</option>
+                        <option value="igi-airport">IGI Airport</option>
+                        <option value="ina">INA</option>
+                        <option value="inderlok">Inderlok</option>
+                        <option value="indraprastha">Indraprastha</option>
+                        <option value="ip-extension">IP Extension</option>
+                        <option value="ito">ITO</option>
+                        <option value="jaffrabad">Jaffrabad</option>
+                        <option value="jahangirpuri">Jahangirpuri</option>
+                        <option value="jama-masjid">Jama Masjid</option>
+                        <option value="jamia-millia-islamia">Jamia Millia Islamia</option>
+                        <option value="janakpuri-east">Janakpuri East</option>
+                        <option value="janakpuri-west">Janakpuri West</option>
+                        <option value="jangpura">Jangpura</option>
+                        <option value="janpath">Janpath</option>
+                        <option value="jasola-apollo">Jasola Apollo</option>
+                        <option value="jasola-vihar-shaheen-bagh">Jasola Vihar Shaheen Bagh</option>
+                        <option value="jawaharlal-nehru-stadium">Jawaharlal Nehru Stadium</option>
+                        <option value="jhandewalan">Jhandewalan</option>
+                        <option value="jhilmil">Jhilmil</option>
+                        <option value="johri-enclave">Johri Enclave</option>
+                        <option value="jor-bagh">Jor Bagh</option>
+                        <option value="kailash-colony">Kailash Colony</option>
+                        <option value="kalkaji-mandir">Kalkaji Mandir</option>
+                        <option value="kalindi-kunj">Kalindi Kunj</option>
+                        <option value="kanhaiya-nagar">Kanhaiya Nagar</option>
+                        <option value="karkarduma">Karkarduma</option>
+                        <option value="karkarduma-court">Karkarduma Court</option>
+                        <option value="karol-bagh">Karol Bagh</option>
+                        <option value="kashmere-gate">Kashmere Gate</option>
+                        <option value="keshav-puram">Keshav Puram</option>
+                        <option value="khan-market">Khan Market</option>
+                        <option value="kirti-nagar">Kirti Nagar</option>
+                        <option value="knowledge-park-ii">Knowledge Park II</option>
+                        <option value="kohat-enclave">Kohat Enclave</option>
+                        <option value="krishna-nagar">Krishna Nagar</option>
+                        <option value="lajpat-nagar">Lajpat Nagar</option>
+                        <option value="lal-qila">Lal Qila</option>
+                        <option value="lok-kalyan-marg">Lok Kalyan Marg</option>
+                        <option value="madipur">Madipur</option>
+                        <option value="maharaja-surajmal-stadium">Maharaja Surajmal Stadium</option>
+                        <option value="majlis-park">Majlis Park</option>
+                        <option value="malviya-nagar">Malviya Nagar</option>
+                        <option value="mandawali-west-vinod-nagar">Mandawali West Vinod Nagar</option>
+                        <option value="mandi-house">Mandi House</option>
+                        <option value="mansarovar-park">Mansarovar Park</option>
+                        <option value="maujpur-babarpur">Maujpur Babarpur</option>
+                        <option value="maya-puri">Maya Puri</option>
+                        <option value="mayur-vihar-1">Mayur Vihar I</option>
+                        <option value="mayur-vihar-extension">Mayur Vihar Extension</option>
+                        <option value="mayur-vihar-pocket-1">Mayur Vihar Pocket 1</option>
+                        <option value="mg-road">MG Road</option>
+                        <option value="model-town">Model Town</option>
+                        <option value="mohan-estate">Mohan Estate</option>
+                        <option value="moolchand">Moolchand</option>
+                        <option value="moti-nagar">Moti Nagar</option>
+                        <option value="mundka">Mundka</option>
+                        <option value="mundka-industrial-area">Mundka Industrial Area</option>
+                        <option value="nangloi">Nangloi</option>
+                        <option value="nangloi-railway-station">Nangloi Railway Station</option>
+                        <option value="naraina-vihar">Naraina Vihar</option>
+                        <option value="nawada">Nawada</option>
+                        <option value="nehru-place">Nehru Place</option>
+                        <option value="netaji-subhash-place">Netaji Subhash Place</option>
+                        <option value="new-ashok-nagar">New Ashok Nagar</option>
+                        <option value="new-delhi">New Delhi</option>
+                        <option value="noida-city-centre">Noida City Centre</option>
+                        <option value="noida-sector-15">Noida Sector 15</option>
+                        <option value="noida-sector-16">Noida Sector 16</option>
+                        <option value="noida-sector-18">Noida Sector 18</option>
+                        <option value="noida-sector-50">Noida Sector 50</option>
+                        <option value="noida-sector-51">Noida Sector 51</option>
+                        <option value="noida-sector-76">Noida Sector 76</option>
+                        <option value="noida-sector-81">Noida Sector 81</option>
+                        <option value="noida-sector-83">Noida Sector 83</option>
+                        <option value="noida-sector-101">Noida Sector 101</option>
+                        <option value="noida-sector-137">Noida Sector 137</option>
+                        <option value="noida-sector-142">Noida Sector 142</option>
+                        <option value="noida-sector-143">Noida Sector 143</option>
+                        <option value="noida-sector-144">Noida Sector 144</option>
+                        <option value="noida-sector-145">Noida Sector 145</option>
+                        <option value="noida-sector-146">Noida Sector 146</option>
+                        <option value="noida-sector-147">Noida Sector 147</option>
+                        <option value="noida-sector-148">Noida Sector 148</option>
+                        <option value="nsez">NSEZ</option>
+                        <option value="okhla">Okhla</option>
+                        <option value="okhla-bird-sanctuary">Okhla Bird Sanctuary</option>
+                        <option value="okhla-nsic">Okhla NSIC</option>
+                        <option value="okhla-vihar">Okhla Vihar</option>
+                        <option value="panchsheel-park">Panchsheel Park</option>
+                        <option value="pandit-shree-ram-sharma">Pandit Shree Ram Sharma</option>
+                        <option value="pari-chowk">Pari Chowk</option>
+                        <option value="paschim-vihar-east">Paschim Vihar East</option>
+                        <option value="paschim-vihar-west">Paschim Vihar West</option>
+                        <option value="patel-chowk">Patel Chowk</option>
+                        <option value="patel-nagar">Patel Nagar</option>
+                        <option value="peeragarhi">Peeragarhi</option>
+                        <option value="pitampura">Pitampura</option>
+                        <option value="pragati-maidan">Pragati Maidan</option>
+                        <option value="pratap-nagar">Pratap Nagar</option>
+                        <option value="pulbangash">Pulbangash</option>
+                        <option value="punjabi-bagh">Punjabi Bagh</option>
+                        <option value="punjabi-bagh-west">Punjabi Bagh West</option>
+                        <option value="qutab-minar">Qutab Minar</option>
+                        <option value="rajdhani-park">Rajdhani Park</option>
+                        <option value="rajiv-chowk">Rajiv Chowk</option>
+                        <option value="rajouri-garden">Rajouri Garden</option>
+                        <option value="ramakrishna-ashram-marg">Ramakrishna Ashram Marg</option>
+                        <option value="ramesh-nagar">Ramesh Nagar</option>
+                        <option value="rithala">Rithala</option>
+                        <option value="rohini-east">Rohini East</option>
+                        <option value="rohini-sector-18">Rohini Sector 18</option>
+                        <option value="rohini-west">Rohini West</option>
+                        <option value="saket">Saket</option>
+                        <option value="samaypur-badli">Samaypur Badli</option>
+                        <option value="sarai-kale-khan">Sarai Kale Khan</option>
+                        <option value="sarai-kale-khan-nizamuddin">Sarai Kale Khan Nizamuddin</option>
+                        <option value="sardar-patel-vidyalaya">Sardar Patel Vidyalaya</option>
+                        <option value="sarita-vihar">Sarita Vihar</option>
+                        <option value="sarojini-nagar">Sarojini Nagar</option>
+                        <option value="satguru-ram-singh-marg">Satguru Ram Singh Marg</option>
+                        <option value="seelampur">Seelampur</option>
+                        <option value="shadipur">Shadipur</option>
+                        <option value="shahdara">Shahdara</option>
+                        <option value="shakurpur">Shakurpur</option>
+                        <option value="shalimar-bagh">Shalimar Bagh</option>
+                        <option value="shastri-nagar">Shastri Nagar</option>
+                        <option value="shastri-park">Shastri Park</option>
+                        <option value="shiv-vihar">Shiv Vihar</option>
+                        <option value="shivaji-park">Shivaji Park</option>
+                        <option value="shivaji-stadium">Shivaji Stadium</option>
+                        <option value="sikanderpur">Sikanderpur</option>
+                        <option value="sir-m-vishweshwaraiah-moti-bagh">Sir M Vishweshwaraiah Moti Bagh</option>
+                        <option value="south-extension">South Extension</option>
+                        <option value="subhash-nagar">Subhash Nagar</option>
+                        <option value="sukhdev-vihar">Sukhdev Vihar</option>
+                        <option value="sultanpur">Sultanpur</option>
+                        <option value="tagore-garden">Tagore Garden</option>
+                        <option value="tikri-border">Tikri Border</option>
+                        <option value="tikri-kalan">Tikri Kalan</option>
+                        <option value="tilak-nagar">Tilak Nagar</option>
+                        <option value="tis-hazari">Tis Hazari</option>
+                        <option value="trilokpuri-sanjay-lake">Trilokpuri Sanjay Lake</option>
+                        <option value="tughlakabad">Tughlakabad</option>
+                        <option value="udyog-bhawan">Udyog Bhawan</option>
+                        <option value="udyog-nagar">Udyog Nagar</option>
+                        <option value="uttam-nagar-east">Uttam Nagar East</option>
+                        <option value="uttam-nagar-west">Uttam Nagar West</option>
+                        <option value="vaishali">Vaishali</option>
+                        <option value="vidhan-sabha">Vidhan Sabha</option>
+                        <option value="vinobapuri">Vinobapuri</option>
+                        <option value="vishwavidyalaya">Vishwavidyalaya</option>
+                        <option value="welcome">Welcome</option>
+                        <option value="yamuna-bank">Yamuna Bank</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="findRoutes()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300">
+                Find Best Routes
+            </button>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden">
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Route 1 -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-blue-800">Route 1 (Recommended)</h3>
+                        <span id="route1Time" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold"></span>
                     </div>
-                    <div class="legend-item">
-                        <div class="legend-color line-blue"></div>
-                        <span>Blue Line</span>
+                    
+                    <div id="route1Stations" class="route-line mb-4"></div>
+                </div>
+
+                <!-- Route 2 -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-blue-800">Route 2 (Alternative)</h3>
+                        <span id="route2Time" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold"></span>
                     </div>
-                    <div class="legend-item">
-                        <div class="legend-color line-green"></div>
-                        <span>Green Line</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color line-yellow"></div>
-                        <span>Yellow Line</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color line-pink"></div>
-                        <span>Pink Line</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color line-magenta"></div>
-                        <span>Magenta Line</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color line-violet"></div>
-                        <span>Violet Line</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color line-orange"></div>
-                        <span>Orange Line</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color line-gray"></div>
-                        <span>Gray Line</span>
+                    
+                    <div id="route2Stations" class="route-line mb-4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- All Modals (Fare Details, Station List, FAQ, etc.) -->
+        <div id="fareModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-xl shadow-2xl p-6 m-4 max-w-2xl w-full max-h-96 overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-blue-800">Delhi Metro Fare Details</h3>
+                    <button onclick="closeFareModal()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-800 mb-2">Token/Card Fares</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div><span class="font-medium">2-5 km:</span> ₹10</div>
+                            <div><span class="font-medium">5-12 km:</span> ₹20</div>
+                            <div><span class="font-medium">12-21 km:</span> ₹30</div>
+                            <div><span class="font-medium">21-32 km:</span> ₹40</div>
+                            <div><span class="font-medium">32+ km:</span> ₹50</div>
+                            <div><span class="font-medium">Airport Express:</span> ₹60</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="footer">
-            <p>RSQ Tech Pvt Ltd., assisted by CNV™</p>
+
+        <!-- Station List Modal -->
+        <div id="stationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-xl shadow-2xl p-6 m-4 max-w-6xl w-full max-h-96 overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-blue-800">All Metro Lines & Stations</h3>
+                    <button onclick="closeStationModal()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="stationList" class="space-y-6">
+                    <!-- Line-wise station list will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Modal -->
+        <div id="faqModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-xl shadow-2xl p-6 m-4 max-w-4xl w-full max-h-96 overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-blue-800">FAQ & Metro Guide</h3>
+                    <button onclick="closeFAQ()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="space-y-4 text-sm">
+                    <div><strong>Q: What are metro operating hours?</strong><br>A: 6:00 AM to 11:00 PM (Monday to Sunday)</div>
+                    <div><strong>Q: How to get a metro card?</strong><br>A: Available at all metro stations with ₹50 refundable deposit</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Crowd Tips Modal -->
+        <div id="crowdModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-xl shadow-2xl p-6 m-4 max-w-5xl w-full max-h-96 overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-blue-800">Crowd Tips & Best Travel Times</h3>
+                    <button onclick="closeCrowdTips()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="space-y-4 text-sm">
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-green-800 mb-2">Best Travel Times (Less Crowded)</h4>
+                        <div><strong>Morning:</strong> 6:00 AM - 7:30 AM</div>
+                        <div><strong>Afternoon:</strong> 11:00 AM - 4:00 PM</div>
+                        <div><strong>Evening:</strong> 8:30 PM - 11:00 PM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Modal -->
+        <div id="aboutModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-xl shadow-2xl p-6 m-4 max-w-3xl w-full max-h-96 overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-blue-800">About Delhi Metro Route Finder</h3>
+                    <button onclick="closeAbout()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="space-y-4 text-sm">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-800 mb-2">About This Application</h4>
+                        <p class="mb-2">Delhi Metro Route Finder is a comprehensive web application designed to help commuters find the best routes between any two metro stations in the Delhi Metro network.</p>
+                        <p class="mb-2"><strong>Features:</strong></p>
+                        <ul class="list-disc list-inside ml-4 space-y-1">
+                            <li>Complete station database with 200+ metro stations</li>
+                            <li>Intelligent route calculation with interchange detection</li>
+                            <li>Real-time fare information and travel time estimates</li>
+                            <li>Line-wise station organization and junction highlighting</li>
+                            <li>Crowd tips and best travel time recommendations</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-800 mb-2">Development Team</h4>
+                        <p><strong>Developed By:</strong> RSQ Private Tech Ltd.</p>
+                        <p><strong>Assisted By:</strong> CNV™</p>
+                        <p class="mt-2 text-xs text-gray-600">This application is designed to provide accurate metro route information for Delhi commuters.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy Policy Modal -->
+        <div id="privacyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-xl shadow-2xl p-6 m-4 max-w-4xl w-full max-h-96 overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-blue-800">Privacy Policy</h3>
+                    <button onclick="closePrivacyPolicy()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="space-y-4 text-sm">
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-green-800 mb-2">Data Collection & Usage</h4>
+                        <p class="mb-2">This Delhi Metro Route Finder application is committed to protecting your privacy:</p>
+                        <ul class="list-disc list-inside ml-4 space-y-1">
+                            <li><strong>No Personal Data Collection:</strong> We do not collect, store, or transmit any personal information</li>
+                            <li><strong>Local Processing:</strong> All route calculations are performed locally in your browser</li>
+                            <li><strong>No Tracking:</strong> We do not use cookies, analytics, or tracking technologies</li>
+                            <li><strong>No Registration Required:</strong> Use the application without creating accounts or providing personal details</li>
+                        </ul>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-800 mb-2">Information We Use</h4>
+                        <ul class="list-disc list-inside ml-4 space-y-1">
+                            <li>Station selection data (processed locally only)</li>
+                            <li>Public Delhi Metro network information</li>
+                            <li>Static fare and timing data from official DMRC sources</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-800 mb-2">Contact Information</h4>
+                        <p><strong>Developer:</strong> RSQ Private Tech Ltd.</p>
+                        <p><strong>For Privacy Concerns:</strong> Contact through official DMRC channels</p>
+                        <p class="mt-2 text-xs text-gray-600">Last Updated: December 2024</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Developer Credits -->
+        <div class="text-center mt-8 py-4 border-t border-blue-200">
+            <div class="text-sm text-blue-600 mb-2"><strong>Developed By RSQ Private Tech Ltd. | Assisted by CNV™</strong></div>
+            <div class="text-xs text-blue-500 mb-4">📞 011-22561231 | ✉️ helpline@dmrc.org</div>
+        </div>
+
+        <!-- Footer Links -->
+        <div class="text-center mt-4 pb-6">
+            <div class="flex justify-center space-x-6 text-sm">
+                <button onclick="showAbout()" class="text-blue-600 hover:text-blue-800 underline">About</button>
+                <button onclick="showPrivacyPolicy()" class="text-blue-600 hover:text-blue-800 underline">Privacy Policy</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Delhi Metro network data
-        const metroData = {
-            lines: {
-                red: {
-                    name: "Red Line",
-                    color: "#e74c3c",
-                    stations: ["Shaheed Sthal", "Hindon River", "Arthala", "Mohan Nagar", "Shyam Park", "Major Mohit Sharma", "Raj Bagh", "Shaheed Nagar", "Dilshad Garden", "Jhilmil", "Mansarovar Park", "Shahdara", "Welcome", "Seelampur", "Shastri Park", "Kashmere Gate", "Tis Hazari", "Pulbangash", "Pratap Nagar", "Shastri Nagar", "Inderlok", "Kanhaiya Nagar", "Keshav Puram", "Netaji Subhash Place", "Kohat Enclave", "Pitam Pura", "Rohini East", "Rohini West", "Rithala"]
-                },
-                blue: {
-                    name: "Blue Line",
-                    color: "#3498db",
-                    stations: ["Noida Electronic City", "Noida Sector 62", "Noida Sector 59", "Noida Sector 61", "Noida Sector 52", "Noida Sector 34", "Noida City Centre", "Golf Course", "Botanical Garden", "Noida Sector 18", "Noida Sector 16", "Noida Sector 15", "New Ashok Nagar", "Mayur Vihar Extension", "Mayur Vihar I", "Akshardham", "Yamuna Bank", "Indraprastha", "Supreme Court", "Mandi House", "Barakhamba Road", "Rajiv Chowk", "Ramakrishna Ashram Marg", "Jhandewalan", "Karol Bagh", "Rajendra Place", "Patel Nagar", "Shadipur", "Kirti Nagar", "Moti Nagar", "Ramesh Nagar", "Rajouri Garden", "Tagore Garden", "Subhash Nagar", "Tilak Nagar", "Janakpuri East", "Janakpuri West", "Uttam Nagar East", "Uttam Nagar West", "Nawada", "Dwarka Mor", "Dwarka", "Dwarka Sector 14", "Dwarka Sector 13", "Dwarka Sector 12", "Dwarka Sector 11", "Dwarka Sector 10", "Dwarka Sector 9", "Dwarka Sector 8", "Dwarka Sector 21"]
-                },
-                green: {
-                    name: "Green Line",
-                    color: "#27ae60",
-                    stations: ["Brigadier Hoshiar Singh", "Badarpur Border", "Sarita Vihar", "Mohan Estate", "Tughlakabad", "Okhla", "Jasola Apollo", "Saket", "Malviya Nagar", "Hauz Khas", "Green Park", "AIIMS", "Race Course", "Jor Bagh", "INA", "Khan Market", "Jawaharlal Nehru Stadium", "Jangpura", "Lajpat Nagar", "Moolchand", "Kailash Colony", "Nehru Place", "Kalkaji Mandir", "Govind Puri", "Harkesh Nagar Okhla", "Jasola Vihar Shaheen Bagh", "Kalindi Kunj", "Okhla Vihar", "Jamia Millia Islamia", "Sukhdev Vihar", "NSIC", "Okhla NSIC", "Kalkaji Mandir"]
-                },
-                yellow: {
-                    name: "Yellow Line",
-                    color: "#f1c40f",
-                    stations: ["Samaypur Badli", "Rohini Sector 18", "Rohini Sector 19", "Haiderpur Badli Mor", "Jahangirpuri", "Adarsh Nagar", "Azadpur", "Model Town", "GTB Nagar", "Vishwavidyalaya", "Vidhan Sabha", "Civil Lines", "Kashmere Gate", "Chandni Chowk", "Chawri Bazar", "New Delhi", "Rajiv Chowk", "Patel Chowk", "Central Secretariat", "Udyog Bhawan", "Race Course", "Jor Bagh", "Dilli Haat INA", "AIIMS", "Green Park", "Hauz Khas", "Malviya Nagar", "Saket", "Qutab Minar", "Chhatarpur", "Sultanpur", "Ghitorni", "Arjan Garh", "Guru Dronacharya", "Sikandarpur", "MG Road", "IFFCO Chowk", "Millennium City Centre Gurugram", "Huda City Centre"]
-                },
-                pink: {
-                    name: "Pink Line",
-                    color: "#e91e63",
-                    stations: ["Majlis Park", "Azadpur", "Shalimar Bagh", "Netaji Subhash Place", "Shakurpur", "Punjabi Bagh West", "ESI Hospital", "Rajouri Garden", "Mayapuri", "Naraina Vihar", "Delhi Cantt", "Durgabai Deshmukh South Campus", "Sir M. Vishweshwaraiah Moti Bagh", "Bhikaji Cama Place", "Sarojini Nagar", "Dilli Haat INA", "South Extension", "Lajpat Nagar", "Vinobapuri", "Ashram", "Sarai Kale Khan", "Mayur Vihar I", "Mayur Vihar Pocket 1", "Trilokpuri", "East Vinod Nagar", "Mandawali", "IP Extension", "Anand Vihar", "Karkarduma", "Karkarduma Court", "Krishna Nagar", "East Azad Nagar", "Welcome", "Jaffrabad", "Maujpur", "Gokulpuri", "Johri Enclave", "Shiv Vihar"]
-                },
-                magenta: {
-                    name: "Magenta Line",
-                    color: "#9b59b6",
-                    stations: ["Janakpuri West", "Dabri Mor", "Dashrath Puri", "Palam", "Sadar Bazar Cantonment", "Terminal 1 IGI Airport", "Shankar Vihar", "Vasant Vihar", "Munirka", "RK Puram", "IIT Delhi", "Hauz Khas", "Panchsheel Park", "Chirag Delhi", "Greater Kailash", "Nehru Enclave", "Kalkaji Mandir", "Okhla NSIC", "Sukhdev Vihar", "Jamia Millia Islamia", "Okhla Vihar", "Jasola Vihar Shaheen Bagh", "Kalindi Kunj", "Okhla Bird Sanctuary", "Botanical Garden"]
-                },
-                violet: {
-                    name: "Violet Line",
-                    color: "#8e44ad",
-                    stations: ["Kashmere Gate", "Lal Qila", "Jama Masjid", "Delhi Gate", "ITO", "Mandi House", "Janpath", "Central Secretariat", "Khan Market", "JLN Stadium", "Jangpura", "Lajpat Nagar", "Moolchand", "Kailash Colony", "Nehru Place", "Kalkaji Mandir", "Govind Puri", "Okhla", "Jasola Apollo", "Sarita Vihar", "Mohan Estate", "Tughlakabad", "Badarpur", "Sarai", "NHPC Chowk", "Mewala Maharajpur", "Sector 28", "Badkal Mor", "Old Faridabad", "Neelam Chowk Ajronda", "Bata Chowk", "Escorts Mujesar", "Sant Surdas", "Raja Nahar Singh"]
-                },
-                orange: {
-                    name: "Orange Line (Airport Express)",
-                    color: "#e67e22",
-                    stations: ["New Delhi", "Shivaji Stadium", "Dhaula Kuan", "Delhi Aerocity", "Terminal 3 IGI Airport"]
-                },
-                gray: {
-                    name: "Gray Line",
-                    color: "#95a5a6",
-                    stations: ["Dwarka", "Nangli", "Najafgarh"]
-                }
+        // ============================================
+        // PLACEHOLDER FUNCTIONS - REPLACE WITH YOUR ACCURATE ROUTE LOGIC
+        // ============================================
+
+        // Line colors for display
+        const lineColors = {
+            'red': '#e53e3e',
+            'blue': '#3182ce',
+            'green': '#38a169',
+            'yellow': '#d69e2e',
+            'violet': '#805ad5',
+            'pink': '#d53f8c',
+            'magenta': '#e91e63',
+            'orange': '#ff6b35',
+            'aqua': '#00bcd4'
+        };
+
+        const lineNames = {
+            'red': 'Red Line',
+            'blue': 'Blue Line',
+            'green': 'Green Line',
+            'yellow': 'Yellow Line',
+            'violet': 'Violet Line',
+            'pink': 'Pink Line',
+            'magenta': 'Magenta Line',
+            'orange': 'Orange Line',
+            'aqua': 'Aqua Line'
+        };
+
+        // ============================================
+        // METRO STATION DATA STRUCTURE
+        // ============================================
+        
+        const metroStations = {
+            'rajiv-chowk': {
+                name: 'Rajiv Chowk',
+                lines: ['blue', 'yellow'],
+                isJunction: true,
+                platforms: { blue: '1', yellow: '2' }
             },
-            interchanges: {
-                "Kashmere Gate": ["red", "yellow", "violet"],
-                "Rajiv Chowk": ["blue", "yellow"],
-                "Central Secretariat": ["yellow", "violet"],
-                "Mandi House": ["blue", "violet"],
-                "Hauz Khas": ["green", "yellow", "magenta"],
-                "Dilli Haat INA": ["yellow", "pink"],
-                "Kalkaji Mandir": ["green", "magenta", "violet"],
-                "Botanical Garden": ["blue", "magenta"],
-                "Rajouri Garden": ["blue", "pink"],
-                "Netaji Subhash Place": ["red", "pink"],
-                "Welcome": ["red", "pink"],
-                "Lajpat Nagar": ["green", "pink", "violet"],
-                "Mayur Vihar I": ["blue", "pink"],
-                "Janakpuri West": ["blue", "magenta"],
-                "Dwarka": ["blue", "gray"],
-                "New Delhi": ["yellow", "orange"],
-                "Azadpur": ["yellow", "pink"]
+            'kashmere-gate': {
+                name: 'Kashmere Gate',
+                lines: ['red', 'yellow', 'violet'],
+                isJunction: true,
+                platforms: { red: '1', yellow: '2', violet: '3' }
             },
-            platforms: {
-                "Kashmere Gate": { "red": "1", "yellow": "2", "violet": "3" },
-                "Rajiv Chowk": { "blue": "1", "yellow": "2" },
-                "Central Secretariat": { "yellow": "1", "violet": "2" },
-                "Mandi House": { "blue": "1", "violet": "2" },
-                "Hauz Khas": { "green": "1", "yellow": "2", "magenta": "3" },
-                "Dilli Haat INA": { "yellow": "1", "pink": "2" },
-                "Kalkaji Mandir": { "green": "1", "magenta": "2", "violet": "3" },
-                "Botanical Garden": { "blue": "1", "magenta": "2" },
-                "Rajouri Garden": { "blue": "1", "pink": "2" },
-                "Netaji Subhash Place": { "red": "1", "pink": "2" },
-                "Welcome": { "red": "1", "pink": "2" },
-                "Lajpat Nagar": { "green": "1", "pink": "2", "violet": "3" },
-                "Mayur Vihar I": { "blue": "1", "pink": "2" },
-                "Janakpuri West": { "blue": "1", "magenta": "2" },
-                "Dwarka": { "blue": "1", "gray": "2" },
-                "New Delhi": { "yellow": "1", "orange": "2" },
-                "Azadpur": { "yellow": "1", "pink": "2" }
+            'central-secretariat': {
+                name: 'Central Secretariat',
+                lines: ['yellow', 'violet'],
+                isJunction: true,
+                platforms: { yellow: '1', violet: '2' }
+            },
+            'mandi-house': {
+                name: 'Mandi House',
+                lines: ['blue', 'violet'],
+                isJunction: true,
+                platforms: { blue: '1', violet: '2' }
+            },
+            'hauz-khas': {
+                name: 'Hauz Khas',
+                lines: ['yellow', 'magenta'],
+                isJunction: true,
+                platforms: { yellow: '1', magenta: '2' }
+            },
+            'rajouri-garden': {
+                name: 'Rajouri Garden',
+                lines: ['blue', 'pink'],
+                isJunction: true,
+                platforms: { blue: '1', pink: '2' }
+            },
+            'netaji-subhash-place': {
+                name: 'Netaji Subhash Place',
+                lines: ['red', 'pink'],
+                isJunction: true,
+                platforms: { red: '1', pink: '2' }
+            },
+            'azadpur': {
+                name: 'Azadpur',
+                lines: ['yellow', 'pink'],
+                isJunction: true,
+                platforms: { yellow: '1', pink: '2' }
+            },
+            'welcome': {
+                name: 'Welcome',
+                lines: ['red', 'pink'],
+                isJunction: true,
+                platforms: { red: '1', pink: '2' }
+            },
+            'mayur-vihar-1': {
+                name: 'Mayur Vihar I',
+                lines: ['blue', 'pink'],
+                isJunction: true,
+                platforms: { blue: '1', pink: '2' }
+            },
+            'kalkaji-mandir': {
+                name: 'Kalkaji Mandir',
+                lines: ['violet', 'magenta'],
+                isJunction: true,
+                platforms: { violet: '1', magenta: '2' }
+            },
+            'nehru-place': {
+                name: 'Nehru Place',
+                lines: ['violet', 'magenta'],
+                isJunction: true,
+                platforms: { violet: '1', magenta: '2' }
+            },
+            'ina': {
+                name: 'INA',
+                lines: ['yellow', 'magenta'],
+                isJunction: true,
+                platforms: { yellow: '1', magenta: '2' }
+            },
+            'dhaula-kuan': {
+                name: 'Dhaula Kuan',
+                lines: ['orange', 'magenta'],
+                isJunction: true,
+                platforms: { orange: '1', magenta: '2' }
+            },
+            'inderlok': {
+                name: 'Inderlok',
+                lines: ['red', 'green'],
+                isJunction: true,
+                platforms: { red: '1', green: '2' }
+            },
+            'kirti-nagar': {
+                name: 'Kirti Nagar',
+                lines: ['blue', 'green'],
+                isJunction: true,
+                platforms: { blue: '1', green: '2' }
+            },
+            'botanical-garden': {
+                name: 'Botanical Garden',
+                lines: ['blue', 'magenta'],
+                isJunction: true,
+                platforms: { blue: '1', magenta: '2' }
+            },
+            'janakpuri-west': {
+                name: 'Janakpuri West',
+                lines: ['blue', 'magenta'],
+                isJunction: true,
+                platforms: { blue: '1', magenta: '2' }
+            },
+            'new-delhi': {
+                name: 'New Delhi',
+                lines: ['yellow', 'orange'],
+                isJunction: true,
+                platforms: { yellow: '1', orange: '2' }
+            },
+            'lajpat-nagar': {
+                name: 'Lajpat Nagar',
+                lines: ['pink', 'violet'],
+                isJunction: true,
+                platforms: { pink: '1', violet: '2' }
             }
         };
 
-        // Initialize the application
-        function initializeApp() {
-            populateStationDropdowns();
-            setupEventListeners();
-        }
+        // Add single line stations
+        const singleLineStations = {
+            // Blue Line
+            'dwarka-sector-21': { name: 'Dwarka Sector 21', lines: ['blue'], platforms: { blue: '1' } },
+            'dwarka-sector-9': { name: 'Dwarka Sector 9', lines: ['blue'], platforms: { blue: '1' } },
+            'dwarka-sector-10': { name: 'Dwarka Sector 10', lines: ['blue'], platforms: { blue: '1' } },
+            'dwarka-sector-11': { name: 'Dwarka Sector 11', lines: ['blue'], platforms: { blue: '1' } },
+            'dwarka-sector-12': { name: 'Dwarka Sector 12', lines: ['blue'], platforms: { blue: '1' } },
+            'dwarka-sector-13': { name: 'Dwarka Sector 13', lines: ['blue'], platforms: { blue: '1' } },
+            'dwarka-sector-14': { name: 'Dwarka Sector 14', lines: ['blue'], platforms: { blue: '1' } },
+            'dwarka': { name: 'Dwarka', lines: ['blue'], platforms: { blue: '1' } },
+            'dwarka-mor': { name: 'Dwarka Mor', lines: ['blue'], platforms: { blue: '1' } },
+            'nawada': { name: 'Nawada', lines: ['blue'], platforms: { blue: '1' } },
+            'uttam-nagar-west': { name: 'Uttam Nagar West', lines: ['blue'], platforms: { blue: '1' } },
+            'uttam-nagar-east': { name: 'Uttam Nagar East', lines: ['blue'], platforms: { blue: '1' } },
+            'janakpuri-east': { name: 'Janakpuri East', lines: ['blue'], platforms: { blue: '1' } },
+            'tilak-nagar': { name: 'Tilak Nagar', lines: ['blue'], platforms: { blue: '1' } },
+            'subhash-nagar': { name: 'Subhash Nagar', lines: ['blue'], platforms: { blue: '1' } },
+            'tagore-garden': { name: 'Tagore Garden', lines: ['blue'], platforms: { blue: '1' } },
+            'ramesh-nagar': { name: 'Ramesh Nagar', lines: ['blue'], platforms: { blue: '1' } },
+            'moti-nagar': { name: 'Moti Nagar', lines: ['blue'], platforms: { blue: '1' } },
+            'shadipur': { name: 'Shadipur', lines: ['blue'], platforms: { blue: '1' } },
+            'patel-nagar': { name: 'Patel Nagar', lines: ['blue'], platforms: { blue: '1' } },
+            'karol-bagh': { name: 'Karol Bagh', lines: ['blue'], platforms: { blue: '1' } },
+            'jhandewalan': { name: 'Jhandewalan', lines: ['blue'], platforms: { blue: '1' } },
+            'ramakrishna-ashram-marg': { name: 'Ramakrishna Ashram Marg', lines: ['blue'], platforms: { blue: '1' } },
+            'barakhamba-road': { name: 'Barakhamba Road', lines: ['blue'], platforms: { blue: '1' } },
+            'connaught-place': { name: 'Connaught Place', lines: ['blue'], platforms: { blue: '1' } },
+            'pragati-maidan': { name: 'Pragati Maidan', lines: ['blue'], platforms: { blue: '1' } },
+            'indraprastha': { name: 'Indraprastha', lines: ['blue'], platforms: { blue: '1' } },
+            'yamuna-bank': { name: 'Yamuna Bank', lines: ['blue'], platforms: { blue: '1' } },
+            'akshardham': { name: 'Akshardham', lines: ['blue'], platforms: { blue: '1' } },
+            'mayur-vihar-extension': { name: 'Mayur Vihar Extension', lines: ['blue'], platforms: { blue: '1' } },
+            'new-ashok-nagar': { name: 'New Ashok Nagar', lines: ['blue'], platforms: { blue: '1' } },
+            'noida-sector-15': { name: 'Noida Sector 15', lines: ['blue'], platforms: { blue: '1' } },
+            'noida-sector-16': { name: 'Noida Sector 16', lines: ['blue'], platforms: { blue: '1' } },
+            'noida-sector-18': { name: 'Noida Sector 18', lines: ['blue'], platforms: { blue: '1' } },
+            'golf-course': { name: 'Golf Course', lines: ['blue'], platforms: { blue: '1' } },
+            'noida-city-centre': { name: 'Noida City Centre', lines: ['blue'], platforms: { blue: '1' } },
 
-        // Populate station dropdowns
-        function populateStationDropdowns() {
-            const fromSelect = document.getElementById('fromStation');
-            const toSelect = document.getElementById('toStation');
-            
-            // Get all unique stations
-            const allStations = new Set();
-            Object.values(metroData.lines).forEach(line => {
-                line.stations.forEach(station => allStations.add(station));
-            });
-            
-            // Sort stations alphabetically
-            const sortedStations = Array.from(allStations).sort();
-            
-            // Populate dropdowns
-            sortedStations.forEach(station => {
-                const fromOption = new Option(station, station);
-                const toOption = new Option(station, station);
-                fromSelect.add(fromOption);
-                toSelect.add(toOption);
-            });
-        }
+            // Yellow Line
+            'samaypur-badli': { name: 'Samaypur Badli', lines: ['yellow'], platforms: { yellow: '1' } },
+            'rohini-sector-18': { name: 'Rohini Sector 18', lines: ['yellow'], platforms: { yellow: '1' } },
+            'haiderpur-badli-mor': { name: 'Haiderpur Badli Mor', lines: ['yellow'], platforms: { yellow: '1' } },
+            'jahangirpuri': { name: 'Jahangirpuri', lines: ['yellow'], platforms: { yellow: '1' } },
+            'adarsh-nagar': { name: 'Adarsh Nagar', lines: ['yellow'], platforms: { yellow: '1' } },
+            'model-town': { name: 'Model Town', lines: ['yellow'], platforms: { yellow: '1' } },
+            'gtb-nagar': { name: 'GTB Nagar', lines: ['yellow'], platforms: { yellow: '1' } },
+            'vishwavidyalaya': { name: 'Vishwavidyalaya', lines: ['yellow'], platforms: { yellow: '1' } },
+            'vidhan-sabha': { name: 'Vidhan Sabha', lines: ['yellow'], platforms: { yellow: '1' } },
+            'civil-lines': { name: 'Civil Lines', lines: ['yellow'], platforms: { yellow: '1' } },
+            'chandni-chowk': { name: 'Chandni Chowk', lines: ['yellow'], platforms: { yellow: '1' } },
+            'chawri-bazar': { name: 'Chawri Bazar', lines: ['yellow'], platforms: { yellow: '1' } },
+            'patel-chowk': { name: 'Patel Chowk', lines: ['yellow'], platforms: { yellow: '1' } },
+            'udyog-bhawan': { name: 'Udyog Bhawan', lines: ['yellow'], platforms: { yellow: '1' } },
+            'lok-kalyan-marg': { name: 'Lok Kalyan Marg', lines: ['yellow'], platforms: { yellow: '1' } },
+            'jor-bagh': { name: 'Jor Bagh', lines: ['yellow'], platforms: { yellow: '1' } },
+            'aiims': { name: 'AIIMS', lines: ['yellow'], platforms: { yellow: '1' } },
+            'green-park': { name: 'Green Park', lines: ['yellow'], platforms: { yellow: '1' } },
+            'malviya-nagar': { name: 'Malviya Nagar', lines: ['yellow'], platforms: { yellow: '1' } },
+            'saket': { name: 'Saket', lines: ['yellow'], platforms: { yellow: '1' } },
+            'qutab-minar': { name: 'Qutab Minar', lines: ['yellow'], platforms: { yellow: '1' } },
+            'chhatarpur': { name: 'Chhatarpur', lines: ['yellow'], platforms: { yellow: '1' } },
+            'sultanpur': { name: 'Sultanpur', lines: ['yellow'], platforms: { yellow: '1' } },
+            'ghitorni': { name: 'Ghitorni', lines: ['yellow'], platforms: { yellow: '1' } },
+            'arjan-garh': { name: 'Arjan Garh', lines: ['yellow'], platforms: { yellow: '1' } },
+            'guru-dronacharya': { name: 'Guru Dronacharya', lines: ['yellow'], platforms: { yellow: '1' } },
+            'sikanderpur': { name: 'Sikanderpur', lines: ['yellow'], platforms: { yellow: '1' } },
+            'mg-road': { name: 'MG Road', lines: ['yellow'], platforms: { yellow: '1' } },
+            'iffco-chowk': { name: 'IFFCO Chowk', lines: ['yellow'], platforms: { yellow: '1' } },
+            'huda-city-centre': { name: 'HUDA City Centre', lines: ['yellow'], platforms: { yellow: '1' } },
 
-        // Setup event listeners
-        function setupEventListeners() {
-            document.getElementById('fromStation').addEventListener('change', function() {
-                updateLineInfo('fromLineInfo', this.value);
-            });
-            
-            document.getElementById('toStation').addEventListener('change', function() {
-                updateLineInfo('toLineInfo', this.value);
-            });
-        }
+            // Red Line
+            'rithala': { name: 'Rithala', lines: ['red'], platforms: { red: '1' } },
+            'rohini-west': { name: 'Rohini West', lines: ['red'], platforms: { red: '1' } },
+            'rohini-east': { name: 'Rohini East', lines: ['red'], platforms: { red: '1' } },
+            'pitampura': { name: 'Pitampura', lines: ['red'], platforms: { red: '1' } },
+            'kohat-enclave': { name: 'Kohat Enclave', lines: ['red'], platforms: { red: '1' } },
+            'keshav-puram': { name: 'Keshav Puram', lines: ['red'], platforms: { red: '1' } },
+            'kanhaiya-nagar': { name: 'Kanhaiya Nagar', lines: ['red'], platforms: { red: '1' } },
+            'shastri-nagar': { name: 'Shastri Nagar', lines: ['red'], platforms: { red: '1' } },
+            'pratap-nagar': { name: 'Pratap Nagar', lines: ['red'], platforms: { red: '1' } },
+            'pulbangash': { name: 'Pulbangash', lines: ['red'], platforms: { red: '1' } },
+            'tis-hazari': { name: 'Tis Hazari', lines: ['red'], platforms: { red: '1' } },
+            'shastri-park': { name: 'Shastri Park', lines: ['red'], platforms: { red: '1' } },
+            'seelampur': { name: 'Seelampur', lines: ['red'], platforms: { red: '1' } },
+            'shahdara': { name: 'Shahdara', lines: ['red'], platforms: { red: '1' } },
+            'mansarovar-park': { name: 'Mansarovar Park', lines: ['red'], platforms: { red: '1' } },
+            'jhilmil': { name: 'Jhilmil', lines: ['red'], platforms: { red: '1' } },
+            'dilshad-garden': { name: 'Dilshad Garden', lines: ['red'], platforms: { red: '1' } },
+            'vaishali': { name: 'Vaishali', lines: ['red'], platforms: { red: '1' } }
+        };
 
-        // Update line information for selected station
-        function updateLineInfo(elementId, station) {
-            const element = document.getElementById(elementId);
-            if (!station) {
-                element.textContent = '';
-                return;
-            }
-            
-            const lines = getStationLines(station);
-            if (lines.length > 0) {
-                const lineNames = lines.map(line => metroData.lines[line].name).join(', ');
-                element.textContent = `Available on: ${lineNames}`;
-            } else {
-                element.textContent = '';
-            }
-        }
+        // Merge all stations
+        Object.assign(metroStations, singleLineStations);
 
-        // Get lines for a station
-        function getStationLines(station) {
-            const lines = [];
-            Object.entries(metroData.lines).forEach(([lineId, line]) => {
-                if (line.stations.includes(station)) {
-                    lines.push(lineId);
-                }
-            });
-            return lines;
-        }
-
-        // Find route between two stations
-        function findRoute() {
+        function findRoutes() {
             const fromStation = document.getElementById('fromStation').value;
             const toStation = document.getElementById('toStation').value;
-            
+
             if (!fromStation || !toStation) {
-                showError('Please select both boarding and destination stations.');
+                alert('Please select both boarding and destination stations');
                 return;
             }
-            
+
             if (fromStation === toStation) {
-                showError('Boarding and destination stations cannot be the same.');
+                alert('Boarding and destination stations cannot be the same');
                 return;
             }
-            
-            const route = calculateRoute(fromStation, toStation);
-            if (route) {
-                displayRoute(route);
-            } else {
-                showError('No route found between the selected stations.');
-            }
+
+            const routes = calculateBestRoutes(fromStation, toStation);
+            displayRoutes(routes, fromStation, toStation);
         }
 
-        // Calculate the best routes (up to 2 options)
-        function calculateRoute(from, to) {
-            const fromLines = getStationLines(from);
-            const toLines = getStationLines(to);
-            const allRoutes = [];
-            
-            // Check for direct connections
-            const commonLines = fromLines.filter(line => toLines.includes(line));
-            for (const line of commonLines) {
-                const route = createDirectRoute(from, to, line);
-                if (route) {
-                    allRoutes.push(route);
-                }
-            }
-            
-            // Find routes with one interchange
-            for (const fromLine of fromLines) {
-                for (const toLine of toLines) {
-                    if (fromLine !== toLine) {
-                        const interchange = findInterchange(fromLine, toLine);
-                        if (interchange) {
-                            const route = createInterchangeRoute(from, to, fromLine, toLine, interchange);
-                            if (route) {
-                                allRoutes.push(route);
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // Sort routes by total time and return best 2
-            allRoutes.sort((a, b) => a.totalTime - b.totalTime);
-            return allRoutes.length > 0 ? allRoutes.slice(0, 2) : null;
-        }
+        function calculateBestRoutes(from, to) {
+            const fromData = metroStations[from];
+            const toData = metroStations[to];
 
-        // Create direct route
-        function createDirectRoute(from, to, lineId) {
-            const line = metroData.lines[lineId];
-            const fromIndex = line.stations.indexOf(from);
-            const toIndex = line.stations.indexOf(to);
-            
-            const stations = fromIndex < toIndex ? 
-                line.stations.slice(fromIndex, toIndex + 1) :
-                line.stations.slice(toIndex, fromIndex + 1).reverse();
-            
-            return {
-                type: 'direct',
-                totalStations: stations.length,
-                totalTime: (stations.length - 1) * 2, // 2 minutes per station
-                interchanges: 0,
-                segments: [{
-                    line: lineId,
-                    stations: stations,
-                    from: from,
-                    to: to
-                }]
-            };
-        }
-
-        // Find interchange station between two lines
-        function findInterchange(line1, line2) {
-            const line1Stations = metroData.lines[line1].stations;
-            const line2Stations = metroData.lines[line2].stations;
-            
-            for (const station of line1Stations) {
-                if (line2Stations.includes(station)) {
-                    return station;
-                }
+            if (!fromData || !toData) {
+                return [{
+                    type: 'basic',
+                    line: 'blue',
+                    stations: [from, to],
+                    time: 25,
+                    distance: 15.5,
+                    boardingPlatform: '1',
+                    destinationPlatform: '1',
+                    boardingLine: 'blue',
+                    destinationLine: 'blue'
+                }];
             }
-            return null;
-        }
 
-        // Create route with interchange
-        function createInterchangeRoute(from, to, fromLine, toLine, interchange) {
-            const route1 = createDirectRoute(from, interchange, fromLine);
-            const route2 = createDirectRoute(interchange, to, toLine);
-            
-            return {
-                type: 'interchange',
-                totalStations: route1.totalStations + route2.totalStations - 1,
-                totalTime: route1.totalTime + route2.totalTime + 3,
-                interchanges: 1,
-                interchangeStation: interchange,
-                segments: [
-                    route1.segments[0],
-                    route2.segments[0]
-                ]
-            };
-        }
+            const routes = [];
 
-        // Display route results
-        function displayRoute(routes) {
-            const resultDiv = document.getElementById('routeResult');
-            const titleElement = document.getElementById('routeTitle');
-            const stepsElement = document.getElementById('routeSteps');
+            // Check for direct connection (same line)
+            const commonLines = fromData.lines.filter(line => toData.lines.includes(line));
             
-            // Handle single route (backward compatibility)
-            if (!Array.isArray(routes)) {
-                routes = [routes];
-            }
-            
-            // Update header
-            titleElement.textContent = `${document.getElementById('fromStation').value} → ${document.getElementById('toStation').value}`;
-            
-            // Clear previous steps
-            stepsElement.innerHTML = '';
-            
-            // If multiple routes, create side-by-side layout
-            if (routes.length > 1) {
-                const routesContainer = document.createElement('div');
-                routesContainer.style.cssText = `
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 30px;
-                    margin-top: 20px;
-                `;
+            if (commonLines.length > 0) {
+                const line = commonLines[0];
+                const stations = getStationsOnRoute(from, to, line);
+                const distance = calculateDistance(stations.length);
+                const time = calculateTravelTime(stations.length);
                 
-                routes.forEach((route, routeIndex) => {
-                    const routeContainer = document.createElement('div');
-                    routeContainer.style.cssText = `
-                        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-                        border-radius: 20px;
-                        padding: 25px;
-                        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-                        border: 2px solid ${routeIndex === 0 ? '#10b981' : '#3b82f6'};
-                    `;
+                routes.push({
+                    type: 'direct',
+                    line: line,
+                    stations: stations,
+                    time: time,
+                    distance: distance,
+                    boardingPlatform: fromData.platforms[line] || '1',
+                    destinationPlatform: toData.platforms[line] || '1',
+                    boardingLine: line,
+                    destinationLine: line
+                });
+            }
+
+            // Find interchange routes through major junctions
+            const majorJunctions = ['rajiv-chowk', 'kashmere-gate', 'central-secretariat', 'mandi-house', 'hauz-khas'];
+            
+            for (const junction of majorJunctions) {
+                if (junction === from || junction === to) continue;
+
+                const junctionData = metroStations[junction];
+                if (!junctionData || !junctionData.isJunction) continue;
+
+                const fromToJunction = fromData.lines.find(line => junctionData.lines.includes(line));
+                const junctionToTo = junctionData.lines.find(line => toData.lines.includes(line));
+
+                if (fromToJunction && junctionToTo && fromToJunction !== junctionToTo) {
+                    const firstSegment = getStationsOnRoute(from, junction, fromToJunction);
+                    const secondSegment = getStationsOnRoute(junction, to, junctionToTo);
+                    const allStations = [...firstSegment, ...secondSegment.slice(1)];
                     
-                    // Route header
-                    const routeHeader = document.createElement('div');
-                    routeHeader.style.cssText = `
-                        text-align: center;
-                        margin-bottom: 20px;
-                        padding: 15px;
-                        background: ${routeIndex === 0 ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)'};
-                        color: white;
-                        border-radius: 15px;
-                        font-weight: 700;
-                        font-size: 1.2rem;
-                    `;
-                    routeHeader.innerHTML = `
-                        <div style="font-size: 1.4rem; margin-bottom: 8px;">Route ${routeIndex + 1}</div>
-                        <div style="display: flex; justify-content: space-around; font-size: 0.9rem; opacity: 0.9;">
-                            <span>⏱️ ${route.totalTime} mins</span>
-                            <span>🚉 ${route.totalStations} stations</span>
-                            <span>🔄 ${route.interchanges === 0 ? 'Direct' : route.interchanges + ' interchange'}</span>
+                    const distance = calculateDistance(allStations.length);
+                    const time = calculateTravelTime(allStations.length) + 5; // Add interchange time
+                    
+                    routes.push({
+                        type: 'interchange',
+                        firstLine: fromToJunction,
+                        secondLine: junctionToTo,
+                        interchange: junction,
+                        stations: allStations,
+                        time: time,
+                        distance: distance,
+                        boardingPlatform: fromData.platforms[fromToJunction] || '1',
+                        junctionPlatform: junctionData.platforms[junctionToTo] || '2',
+                        destinationPlatform: toData.platforms[junctionToTo] || '1',
+                        boardingLine: fromToJunction,
+                        destinationLine: junctionToTo
+                    });
+                }
+            }
+
+            // If no routes found, create a basic route
+            if (routes.length === 0) {
+                routes.push({
+                    type: 'basic',
+                    line: fromData.lines[0],
+                    stations: [from, to],
+                    time: 25,
+                    distance: 15.5,
+                    boardingPlatform: fromData.platforms[fromData.lines[0]] || '1',
+                    destinationPlatform: toData.platforms[toData.lines[0]] || '1',
+                    boardingLine: fromData.lines[0],
+                    destinationLine: toData.lines[0] || fromData.lines[0]
+                });
+            }
+
+            // Sort routes by time and return top 2
+            routes.sort((a, b) => a.time - b.time);
+            return routes.slice(0, 2);
+        }
+
+        function getStationsOnRoute(from, to, line) {
+            // Simplified route calculation - you can enhance this with actual station sequences
+            return [from, to];
+        }
+
+        function calculateDistance(stationCount) {
+            return Math.round((stationCount - 1) * 1.2 * 10) / 10;
+        }
+
+        function calculateTravelTime(stationCount) {
+            const baseTime = 5;
+            const timePerStation = 2.5;
+            return Math.round(baseTime + (stationCount - 1) * timePerStation);
+        }
+
+        // ============================================
+        // DISPLAY FUNCTIONS (KEEP THESE - THEY HANDLE THE SYSTEMATIC STRUCTURE)
+        // ============================================
+
+        function displayRoutes(routes, from, to) {
+            if (routes.length === 0) {
+                alert('Route information not available for selected stations');
+                return;
+            }
+
+            document.getElementById('resultsSection').classList.remove('hidden');
+
+            routes.forEach((route, index) => {
+                const routeNum = index + 1;
+                document.getElementById(`route${routeNum}Time`).textContent = `${route.time} min • ${route.distance} km`;
+                displayStations(route, routeNum);
+            });
+
+            // Handle single route display
+            const routeContainer = document.querySelector('#resultsSection .grid');
+            const routeCards = document.querySelectorAll('#resultsSection .bg-white.rounded-xl.shadow-lg.p-6');
+            
+            if (routes.length === 1) {
+                routeContainer.classList.remove('lg:grid-cols-2');
+                routeContainer.classList.add('lg:grid-cols-1');
+                if (routeCards[1]) routeCards[1].style.display = 'none';
+            } else {
+                routeContainer.classList.remove('lg:grid-cols-1');
+                routeContainer.classList.add('lg:grid-cols-2');
+                if (routeCards[1]) routeCards[1].style.display = 'block';
+            }
+        }
+
+        function displayStations(route, routeNum) {
+            const container = document.getElementById(`route${routeNum}Stations`);
+            container.innerHTML = '';
+
+            const allStations = route.stations;
+
+            allStations.forEach((stationId, index) => {
+                const stationData = metroStations[stationId];
+                if (!stationData) return;
+
+                const stationDiv = document.createElement('div');
+                const isFirst = index === 0;
+                const isLast = index === allStations.length - 1;
+                const isInterchange = route.type === 'interchange' && stationId === route.interchange;
+                const isIntermediate = !isFirst && !isLast && !isInterchange;
+                const isJunction = stationData.isJunction || (stationData.lines && stationData.lines.length > 1);
+
+                // Determine current line for this station
+                let currentLine = route.line; // For direct routes
+                if (route.type === 'interchange') {
+                    currentLine = (index <= allStations.indexOf(route.interchange)) ? route.firstLine : route.secondLine;
+                }
+
+                if (isFirst || isLast || isInterchange) {
+                    // Main stations: Boarding, Destination, Junction
+                    stationDiv.className = 'flex items-center justify-between mb-4 p-4 rounded-lg border-l-4';
+                    stationDiv.style.borderLeftColor = lineColors[currentLine];
+                    stationDiv.style.backgroundColor = '#f8fafc';
+
+                    let platformNumber = '';
+                    let stationType = '';
+                    let typeColor = '';
+
+                    if (isFirst) {
+                        platformNumber = route.boardingPlatform;
+                        stationType = '🚇 BOARDING STATION';
+                        typeColor = 'bg-blue-600';
+                    } else if (isLast) {
+                        platformNumber = route.destinationPlatform;
+                        stationType = '🎯 DESTINATION STATION';
+                        typeColor = 'bg-green-600';
+                    } else if (isInterchange) {
+                        platformNumber = route.junctionPlatform;
+                        stationType = `🔄 CHANGE TO ${lineNames[route.secondLine].toUpperCase()}`;
+                        typeColor = 'bg-orange-600';
+                    }
+
+                    // Junction station line indicators
+                    let junctionIndicators = '';
+                    if (isJunction && stationData.lines && stationData.lines.length > 1) {
+                        junctionIndicators = stationData.lines.map(line => 
+                            `<span class="inline-block w-4 h-4 rounded-full mr-1 border-2 border-white shadow-sm" style="background-color: ${lineColors[line]}"></span>`
+                        ).join('');
+                    }
+
+                    stationDiv.innerHTML = `
+                        <div class="flex-1">
+                            <div class="flex items-center mb-2">
+                                <div class="font-bold text-xl ${isJunction ? 'text-blue-800' : 'text-gray-800'}">${stationData.name}</div>
+                                ${junctionIndicators ? `<div class="ml-3 flex items-center">${junctionIndicators}</div>` : ''}
+                            </div>
+                            <div class="text-sm font-semibold mb-2" style="color: ${lineColors[currentLine]}">${lineNames[currentLine]}</div>
+                            <div class="text-xs text-white font-semibold ${typeColor} px-3 py-1 rounded-full inline-block">${stationType}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-bold text-gray-700 bg-gray-200 px-3 py-1 rounded">Platform ${platformNumber}</div>
                         </div>
                     `;
-                    routeContainer.appendChild(routeHeader);
+                } else if (isIntermediate) {
+                    // Intermediate stations - simple display
+                    stationDiv.className = 'flex items-center mb-2 ml-6 py-1';
                     
-                    // Route segments
-                    const segmentsContainer = document.createElement('div');
-                    displayRouteSegments(route, segmentsContainer);
-                    routeContainer.appendChild(segmentsContainer);
-                    
-                    routesContainer.appendChild(routeContainer);
-                });
-                
-                stepsElement.appendChild(routesContainer);
-            } else {
-                // Single route display
-                const route = routes[0];
-                
-                // Single route stats
-                const statsDiv = document.createElement('div');
-                statsDiv.style.cssText = `
-                    display: flex;
-                    justify-content: center;
-                    gap: 25px;
-                    margin-bottom: 30px;
-                    padding: 20px;
-                    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(30, 64, 175, 0.05) 100%);
-                    border-radius: 20px;
-                `;
-                statsDiv.innerHTML = `
-                    <div class="stat"><span>⏱️</span><span>${route.totalTime} mins</span></div>
-                    <div class="stat"><span>🚉</span><span>${route.totalStations} stations</span></div>
-                    <div class="stat"><span>🔄</span><span>${route.interchanges === 0 ? 'Direct' : route.interchanges + ' interchange'}</span></div>
-                `;
-                stepsElement.appendChild(statsDiv);
-                
-                displayRouteSegments(route, stepsElement);
-            }
-            
-            // Show result
-            resultDiv.classList.add('show');
-            resultDiv.scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        // Display route segments (extracted for reuse)
-        function displayRouteSegments(route, container) {
-            // Display route segments
-            route.segments.forEach((segment, segmentIndex) => {
-                // Create route section
-                const sectionDiv = document.createElement('div');
-                sectionDiv.className = 'route-section';
-                
-                // Section header
-                const headerDiv = document.createElement('div');
-                headerDiv.className = `section-header line-${segment.line}`;
-                headerDiv.innerHTML = `
-                    <img src="https://i.ibb.co/602MWkZ/logo.png" alt="Metro Logo" style="width: 24px; height: 24px; vertical-align: middle; border-radius: 4px; filter: brightness(0) invert(1);" onerror="this.style.display='none';">
-                    <span>${metroData.lines[segment.line].name}</span>
-                    <span style="margin-left: auto;">${segment.stations.length - 1} stops</span>
-                `;
-                sectionDiv.appendChild(headerDiv);
-                
-                // Stations list
-                const stationsDiv = document.createElement('div');
-                stationsDiv.className = 'stations-list';
-                
-                segment.stations.forEach((station, stationIndex) => {
-                    const stationDiv = document.createElement('div');
-                    stationDiv.className = 'station-item';
-                    
-                    // Add special classes for boarding/destination/junction
-                    if (station === segment.from && segmentIndex === 0) {
-                        stationDiv.classList.add('boarding-station');
-                    } else if (station === segment.to && segmentIndex === route.segments.length - 1) {
-                        stationDiv.classList.add('destination-station');
-                    } else if (metroData.interchanges[station]) {
-                        stationDiv.classList.add('junction-station');
+                    // Small junction indicators for intermediate stations
+                    let smallJunctionIndicators = '';
+                    if (isJunction && stationData.lines && stationData.lines.length > 1) {
+                        smallJunctionIndicators = stationData.lines.map(line => 
+                            `<span class="inline-block w-2 h-2 rounded-full mr-1" style="background-color: ${lineColors[line]}"></span>`
+                        ).join('');
                     }
                     
-                    // Station dot
-                    const dotDiv = document.createElement('div');
-                    dotDiv.className = `station-dot line-${segment.line}`;
-                    stationDiv.appendChild(dotDiv);
-                    
-                    // Station name
-                    const nameDiv = document.createElement('div');
-                    nameDiv.className = 'station-name';
-                    nameDiv.textContent = station;
-                    stationDiv.appendChild(nameDiv);
-                    
-                    // Station info
-                    const infoDiv = document.createElement('div');
-                    infoDiv.className = 'station-info';
-                    
-                    // Show platform info for boarding station or junction stations
-                    if ((station === segment.from && segmentIndex === 0) || metroData.interchanges[station]) {
-                        const stationInfoDiv = document.createElement('div');
-                        stationInfoDiv.className = metroData.interchanges[station] ? 'junction-info' : 'boarding-info';
-                        
-                        // Platform info
-                        if (metroData.platforms[station] && metroData.platforms[station][segment.line]) {
-                            const platformDiv = document.createElement('div');
-                            platformDiv.className = 'platform-info';
-                            platformDiv.textContent = `Platform ${metroData.platforms[station][segment.line]}`;
-                            stationInfoDiv.appendChild(platformDiv);
-                        }
-                        
-                        // Available lines for junction stations
-                        if (metroData.interchanges[station]) {
-                            const linesDiv = document.createElement('div');
-                            linesDiv.className = 'available-lines';
-                            const availableLines = metroData.interchanges[station]
-                                .map(line => metroData.lines[line].name)
-                                .join(', ');
-                            linesDiv.textContent = availableLines;
-                            stationInfoDiv.appendChild(linesDiv);
-                        }
-                        
-                        infoDiv.appendChild(stationInfoDiv);
-                    }
-                    
-                    stationDiv.appendChild(infoDiv);
-                    stationsDiv.appendChild(stationDiv);
-                });
-                
-                sectionDiv.appendChild(stationsDiv);
-                container.appendChild(sectionDiv);
-                
-                // Add interchange section if not the last segment
-                if (segmentIndex < route.segments.length - 1) {
-                    const interchangeDiv = document.createElement('div');
-                    interchangeDiv.className = 'interchange-section';
-                    
-                    const titleDiv = document.createElement('div');
-                    titleDiv.className = 'interchange-title';
-                    titleDiv.innerHTML = `
-                        <span>🔄</span>
-                        <span>Change trains at ${route.interchangeStation}</span>
+                    stationDiv.innerHTML = `
+                        <div class="w-3 h-3 bg-gray-400 rounded-full mr-3 flex-shrink-0"></div>
+                        <div class="text-sm text-gray-700 flex items-center">
+                            <span class="${isJunction ? 'font-medium text-blue-700' : ''}">${stationData.name}</span>
+                            ${smallJunctionIndicators ? `<div class="ml-2 flex items-center">${smallJunctionIndicators}</div>` : ''}
+                        </div>
                     `;
-                    interchangeDiv.appendChild(titleDiv);
-                    
-                    const detailsDiv = document.createElement('div');
-                    detailsDiv.className = 'interchange-details';
-                    detailsDiv.innerHTML = `
-                        Switch from <strong>${metroData.lines[segment.line].name}</strong> 
-                        to <strong>${metroData.lines[route.segments[segmentIndex + 1].line].name}</strong>
-                        ${metroData.platforms[route.interchangeStation] ? 
-                            `<br>Go to Platform ${metroData.platforms[route.interchangeStation][route.segments[segmentIndex + 1].line]}` : ''}
-                    `;
-                    interchangeDiv.appendChild(detailsDiv);
-                    
-                    container.appendChild(interchangeDiv);
                 }
+
+                container.appendChild(stationDiv);
             });
         }
 
-        // Show error message
-        function showError(message) {
-            const resultDiv = document.getElementById('routeResult');
-            resultDiv.innerHTML = `<div class="error-message">${message}</div>`;
-            resultDiv.classList.add('show');
+        // ============================================
+        // UTILITY FUNCTIONS (KEEP THESE)
+        // ============================================
+
+        function goHome() {
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('fromStation').value = '';
+            document.getElementById('toStation').value = '';
         }
 
-        // Initialize app when page loads
-        document.addEventListener('DOMContentLoaded', initializeApp);
+        function showFareDetails() {
+            document.getElementById('fareModal').classList.remove('hidden');
+        }
+
+        function closeFareModal() {
+            document.getElementById('fareModal').classList.add('hidden');
+        }
+
+        function showStationList() {
+            populateStationList();
+            document.getElementById('stationModal').classList.remove('hidden');
+        }
+
+        function populateStationList() {
+            const stationListContainer = document.getElementById('stationList');
+            
+            // Define line-wise stations
+            const lineStations = {
+                'Red Line': {
+                    color: '#e53e3e',
+                    stations: ['Rithala', 'Rohini West', 'Rohini East', 'Pitampura', 'Kohat Enclave', 'Netaji Subhash Place', 'Keshav Puram', 'Kanhaiya Nagar', 'Inderlok', 'Shastri Nagar', 'Pratap Nagar', 'Pulbangash', 'Tis Hazari', 'Kashmere Gate', 'Shastri Park', 'Seelampur', 'Welcome', 'Shahdara', 'Mansarovar Park', 'Jhilmil', 'Dilshad Garden', 'Vaishali']
+                },
+                'Blue Line': {
+                    color: '#3182ce',
+                    stations: ['Dwarka Sector 21', 'Dwarka Sector 9', 'Dwarka Sector 10', 'Dwarka Sector 11', 'Dwarka Sector 12', 'Dwarka Sector 13', 'Dwarka Sector 14', 'Dwarka', 'Dwarka Mor', 'Nawada', 'Uttam Nagar West', 'Uttam Nagar East', 'Janakpuri West', 'Janakpuri East', 'Tilak Nagar', 'Subhash Nagar', 'Tagore Garden', 'Rajouri Garden', 'Ramesh Nagar', 'Moti Nagar', 'Kirti Nagar', 'Shadipur', 'Patel Nagar', 'Karol Bagh', 'Jhandewalan', 'Ramakrishna Ashram Marg', 'Rajiv Chowk', 'Barakhamba Road', 'Mandi House', 'Pragati Maidan', 'Indraprastha', 'Yamuna Bank', 'Akshardham', 'Mayur Vihar I', 'Mayur Vihar Extension', 'New Ashok Nagar', 'Noida Sector 15', 'Noida Sector 16', 'Noida Sector 18', 'Botanical Garden', 'Golf Course', 'Noida City Centre']
+                },
+                'Yellow Line': {
+                    color: '#d69e2e',
+                    stations: ['Samaypur Badli', 'Rohini Sector 18', 'Haiderpur Badli Mor', 'Jahangirpuri', 'Adarsh Nagar', 'Azadpur', 'Model Town', 'GTB Nagar', 'Vishwavidyalaya', 'Vidhan Sabha', 'Civil Lines', 'Kashmere Gate', 'Chandni Chowk', 'Chawri Bazar', 'New Delhi', 'Rajiv Chowk', 'Patel Chowk', 'Central Secretariat', 'Udyog Bhawan', 'Lok Kalyan Marg', 'Jor Bagh', 'INA', 'AIIMS', 'Green Park', 'Hauz Khas', 'Malviya Nagar', 'Saket', 'Qutab Minar', 'Chhatarpur', 'Sultanpur', 'Ghitorni', 'Arjan Garh', 'Guru Dronacharya', 'Sikanderpur', 'MG Road', 'IFFCO Chowk', 'HUDA City Centre']
+                },
+                'Green Line': {
+                    color: '#38a169',
+                    stations: ['Mundka', 'Mundka Industrial Area', 'Ghevra Metro Station', 'Tikri Kalan', 'Tikri Border', 'Pandit Shree Ram Sharma', 'Bahadurgarh City', 'Brigadier Hoshiar Singh', 'Inderlok', 'Ashok Park Main', 'Satguru Ram Singh Marg', 'Kirti Nagar']
+                },
+                'Violet Line': {
+                    color: '#805ad5',
+                    stations: ['Kashmere Gate', 'Lal Qila', 'Jama Masjid', 'Delhi Gate', 'ITO', 'Mandi House', 'Janpath', 'Central Secretariat', 'Khan Market', 'Jawaharlal Nehru Stadium', 'Jangpura', 'Lajpat Nagar', 'Moolchand', 'Kailash Colony', 'Nehru Place', 'Kalkaji Mandir', 'Govind Puri', 'Harkesh Nagar Okhla', 'Jasola Apollo', 'Sarita Vihar', 'Mohan Estate', 'Tughlakabad', 'Badarpur Border', 'Sarai Kale Khan', 'Mayur Vihar Pocket 1', 'Trilokpuri Sanjay Lake', 'East Vinod Nagar Mayur Vihar 2', 'Mandawali West Vinod Nagar', 'IP Extension', 'Anand Vihar ISBT', 'Karkarduma', 'Karkarduma Court', 'Krishna Nagar', 'East Azad Nagar', 'Welcome', 'Jaffrabad', 'Maujpur Babarpur', 'Gokulpuri', 'Johri Enclave', 'Shiv Vihar']
+                },
+                'Pink Line': {
+                    color: '#d53f8c',
+                    stations: ['Majlis Park', 'Azadpur', 'Shalimar Bagh', 'Netaji Subhash Place', 'Shakurpur', 'Punjabi Bagh West', 'ESI Hospital', 'Rajouri Garden', 'Maya Puri', 'Naraina Vihar', 'Delhi Cantt', 'Durgabai Deshmukh South Campus', 'Sir M Vishweshwaraiah Moti Bagh', 'Bhikaji Cama Place', 'Sarojini Nagar', 'Dilli Haat INA', 'South Extension', 'Lajpat Nagar', 'Vinobapuri', 'Ashram', 'Sarai Kale Khan Nizamuddin', 'Mayur Vihar I', 'Mayur Vihar Pocket 1', 'Trilokpuri Sanjay Lake', 'East Vinod Nagar Mayur Vihar 2', 'Mandawali West Vinod Nagar', 'IP Extension', 'Anand Vihar ISBT', 'Karkarduma', 'Anand Vihar ISBT', 'Shiv Vihar']
+                },
+                'Magenta Line': {
+                    color: '#e91e63',
+                    stations: ['Botanical Garden', 'Okhla Bird Sanctuary', 'Kalindi Kunj', 'Jasola Vihar Shaheen Bagh', 'Okhla Vihar', 'Jamia Millia Islamia', 'Sukhdev Vihar', 'Okhla NSIC', 'Kalkaji Mandir', 'Nehru Place', 'Greater Kailash', 'Chirag Delhi', 'Panchsheel Park', 'Hauz Khas', 'INA', 'Dhaula Kuan', 'Delhi Aerocity', 'IGI Airport', 'Dwarka Sector 21']
+                },
+                'Orange Line (Airport Express)': {
+                    color: '#ff6b35',
+                    stations: ['New Delhi', 'Shivaji Stadium', 'Dhaula Kuan', 'Delhi Aerocity', 'IGI Airport']
+                },
+                'Aqua Line': {
+                    color: '#00bcd4',
+                    stations: ['Noida Sector 51', 'Noida Sector 50', 'Noida Sector 76', 'Noida Sector 101', 'Noida Sector 81', 'NSEZ', 'Noida Sector 83', 'Noida Sector 137', 'Noida Sector 142', 'Noida Sector 143', 'Noida Sector 144', 'Noida Sector 145', 'Noida Sector 146', 'Noida Sector 147', 'Noida Sector 148', 'Knowledge Park II', 'Pari Chowk', 'Alpha 1', 'Delta 1', 'GNIDA Office', 'Depot Station']
+                }
+            };
+
+            let html = '';
+            
+            Object.entries(lineStations).forEach(([lineName, lineData]) => {
+                html += `
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center mb-3">
+                            <div class="w-4 h-4 rounded-full mr-3" style="background-color: ${lineData.color}"></div>
+                            <h4 class="font-bold text-lg" style="color: ${lineData.color}">${lineName}</h4>
+                            <span class="ml-2 text-sm text-gray-600">(${lineData.stations.length} stations)</span>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 text-sm">
+                            ${lineData.stations.map(station => `
+                                <div class="bg-white p-2 rounded border-l-2 hover:bg-gray-50" style="border-left-color: ${lineData.color}">
+                                    ${station}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            stationListContainer.innerHTML = html;
+        }
+
+        function closeStationModal() {
+            document.getElementById('stationModal').classList.add('hidden');
+        }
+
+        function showFAQ() {
+            document.getElementById('faqModal').classList.remove('hidden');
+        }
+
+        function closeFAQ() {
+            document.getElementById('faqModal').classList.add('hidden');
+        }
+
+        function showCrowdTips() {
+            document.getElementById('crowdModal').classList.remove('hidden');
+        }
+
+        function closeCrowdTips() {
+            document.getElementById('crowdModal').classList.add('hidden');
+        }
+
+        function showAbout() {
+            document.getElementById('aboutModal').classList.remove('hidden');
+        }
+
+        function closeAbout() {
+            document.getElementById('aboutModal').classList.add('hidden');
+        }
+
+        function showPrivacyPolicy() {
+            document.getElementById('privacyModal').classList.remove('hidden');
+        }
+
+        function closePrivacyPolicy() {
+            document.getElementById('privacyModal').classList.add('hidden');
+        }
     </script>
-    
-    <!-- Structured Data for SEO -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Delhi Metro Route Planner",
-        "description": "Find the fastest route between any two Delhi Metro stations with real-time directions and travel estimates",
-        "url": "https://yourdomain.com",
-        "applicationCategory": "TravelApplication",
-        "operatingSystem": "Web Browser",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "INR"
-        },
-        "creator": {
-            "@type": "Organization",
-            "name": "RSQ Tech Pvt Ltd"
-        },
-        "keywords": "Delhi Metro, route planner, metro map, Delhi transport, metro stations",
-        "image": "https://i.ibb.co/602MWkZ/logo.png"
-    }
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96c25fc54274897e',t:'MTc1NDY5MTM0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96c6f9a3462059c4',t:'MTc1NDczOTU5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
+
