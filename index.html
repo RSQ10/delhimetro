@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delhi Metro Route Planner - Find Best Routes | RSQ Tech</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Find the fastest route between any two Delhi Metro stations. Get real-time directions, interchange information, and travel time estimates for all Delhi Metro lines.">
+    <meta name="keywords" content="Delhi Metro, route planner, metro map, Delhi transport, metro stations, route finder, Delhi Metro lines, public transport">
+    <meta name="author" content="RSQ Tech Pvt Ltd">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Tags for Social Media -->
+    <meta property="og:title" content="Delhi Metro Route Planner - Find Best Routes">
+    <meta property="og:description" content="Find the fastest route between any two Delhi Metro stations with real-time directions and travel estimates.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourdomain.com">
+    <meta property="og:image" content="https://i.ibb.co/602MWkZ/logo.png">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Delhi Metro Route Planner">
+    <meta name="twitter:description" content="Find the fastest route between any two Delhi Metro stations">
+    <meta name="twitter:image" content="https://i.ibb.co/602MWkZ/logo.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://yourdomain.com">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/602MWkZ/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="70" cy="80" r="2.5" fill="rgba(255,255,255,0.1)"/></svg>');
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(100px); }
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            font-weight: 300;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .route-planner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .station-selector {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 30px;
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .station-selector::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #1e40af);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .station-selector:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .station-selector h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .select-wrapper {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        select:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .line-info {
+            font-size: 0.95rem;
+            color: #3b82f6;
+            margin-top: 8px;
+            font-weight: 600;
+            padding: 8px 12px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 10px;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .find-route-btn {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .find-route-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .find-route-btn:hover::before {
+            left: 100%;
+        }
+
+        .find-route-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4);
+        }
+
+        .find-route-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .route-result {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 25px;
+            padding: 35px;
+            margin-top: 40px;
+            display: none;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .route-result.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .route-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #e9ecef;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(30, 64, 175, 0.05) 100%);
+            padding: 25px;
+            border-radius: 20px;
+            margin: -10px -10px 30px -10px;
+        }
+
+        .route-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            font-weight: 800;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .route-stats {
+            display: flex;
+            gap: 25px;
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-weight: 600;
+        }
+
+        .stat span:first-child {
+            font-size: 1.2rem;
+        }
+
+        .route-steps {
+            list-style: none;
+        }
+
+        .route-section {
+            margin-bottom: 35px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .route-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+        }
+
+        .section-header {
+            padding: 25px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .stations-list {
+            padding: 0;
+        }
+
+        .station-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 25px;
+            border-bottom: 1px solid rgba(240,240,240,0.8);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .station-item:hover {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            transform: translateX(5px);
+        }
+
+        .station-item:last-child {
+            border-bottom: none;
+        }
+
+        .station-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 18px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: 2px solid white;
+        }
+
+        .station-name {
+            flex: 1;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.05rem;
+        }
+
+        .station-info {
+            font-size: 0.9rem;
+            color: #666;
+            margin-left: auto;
+        }
+
+        .junction-station {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border-left: 6px solid #ff9800;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2);
+        }
+
+        .junction-station .station-name {
+            color: #e65100;
+            font-size: 1.1rem;
+        }
+
+        .junction-info, .boarding-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .platform-info {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+        }
+
+        .available-lines {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .interchange-section {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 20px;
+            border: 3px solid #ff9800;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interchange-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff9800, #f57c00);
+        }
+
+        .interchange-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #e65100;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .interchange-details {
+            color: #bf360c;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .boarding-station {
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c8 100%);
+            border-left: 6px solid #4caf50;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+        }
+
+        .boarding-station .station-name {
+            color: #2e7d32;
+            font-size: 1.1rem;
+        }
+
+        .boarding-station::before {
+            content: '🚀';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+        }
+
+        .destination-station {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-left: 6px solid #f44336;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.2);
+        }
+
+        .destination-station .station-name {
+            color: #c62828;
+            font-size: 1.1rem;
+        }
+
+        .destination-station::before {
+            content: '🔖';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+        }
+
+        .line-red { background-color: #e74c3c; }
+        .line-blue { background-color: #3498db; }
+        .line-green { background-color: #27ae60; }
+        .line-yellow { background-color: #f1c40f; color: #333; }
+        .line-pink { background-color: #e91e63; }
+        .line-magenta { background-color: #9b59b6; }
+        .line-violet { background-color: #8e44ad; }
+        .line-orange { background-color: #e67e22; }
+        .line-gray { background-color: #95a5a6; }
+
+        .metro-map {
+            margin-top: 40px;
+            text-align: center;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .map-title {
+            font-size: 1.6rem;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-weight: 800;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .line-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border: 2px solid transparent;
+        }
+
+        .legend-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: 2px solid white;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .footer {
+            text-align: right;
+            padding: 20px 30px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-top: 1px solid #e2e8f0;
+            margin-top: 20px;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .route-planner {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .route-stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .footer {
+                text-align: center;
+                padding: 15px 20px;
+            }
+            
+            /* Mobile responsive for multiple routes */
+            .route-result div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <img src="https://i.ibb.co/602MWkZ/logo.png" alt="Metro Logo" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 15px; border-radius: 8px;" onerror="this.src=''; this.alt='Logo failed to load'; this.style.display='none';">
+                <span>Delhi Metro Route Planner</span>
+            </h1>
+            <p>Find the best route between any two Delhi Metro stations</p>
+        </div>
+
+        <div class="main-content">
+            <div class="route-planner">
+                <div class="station-selector">
+                    <h3>📍 Boarding Station</h3>
+                    <div class="select-wrapper">
+                        <select id="fromStation">
+                            <option value="">Select boarding station</option>
+                        </select>
+                        <div class="line-info" id="fromLineInfo"></div>
+                    </div>
+                </div>
+
+                <div class="station-selector">
+                    <h3>🔖 Destination Station</h3>
+                    <div class="select-wrapper">
+                        <select id="toStation">
+                            <option value="">Select destination station</option>
+                        </select>
+                        <div class="line-info" id="toLineInfo"></div>
+                    </div>
+                </div>
+
+                <button class="find-route-btn" onclick="findRoute()">
+                    🔍 Find Best Route
+                </button>
+            </div>
+
+            <div id="routeResult" class="route-result">
+                <div class="route-header">
+                    <div class="route-title" id="routeTitle"></div>
+                </div>
+                <div class="route-steps" id="routeSteps"></div>
+            </div>
+
+            <div class="metro-map">
+                <h3 class="map-title">Delhi Metro Lines</h3>
+                <div class="line-legend">
+                    <div class="legend-item">
+                        <div class="legend-color line-red"></div>
+                        <span>Red Line</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color line-blue"></div>
+                        <span>Blue Line</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color line-green"></div>
+                        <span>Green Line</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color line-yellow"></div>
+                        <span>Yellow Line</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color line-pink"></div>
+                        <span>Pink Line</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color line-magenta"></div>
+                        <span>Magenta Line</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color line-violet"></div>
+                        <span>Violet Line</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color line-orange"></div>
+                        <span>Orange Line</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color line-gray"></div>
+                        <span>Gray Line</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>RSQ Tech Pvt Ltd., assisted by CNV™</p>
+        </div>
+    </div>
+
+    <script>
+        // Delhi Metro network data
+        const metroData = {
+            lines: {
+                red: {
+                    name: "Red Line",
+                    color: "#e74c3c",
+                    stations: ["Shaheed Sthal", "Hindon River", "Arthala", "Mohan Nagar", "Shyam Park", "Major Mohit Sharma", "Raj Bagh", "Shaheed Nagar", "Dilshad Garden", "Jhilmil", "Mansarovar Park", "Shahdara", "Welcome", "Seelampur", "Shastri Park", "Kashmere Gate", "Tis Hazari", "Pulbangash", "Pratap Nagar", "Shastri Nagar", "Inderlok", "Kanhaiya Nagar", "Keshav Puram", "Netaji Subhash Place", "Kohat Enclave", "Pitam Pura", "Rohini East", "Rohini West", "Rithala"]
+                },
+                blue: {
+                    name: "Blue Line",
+                    color: "#3498db",
+                    stations: ["Noida Electronic City", "Noida Sector 62", "Noida Sector 59", "Noida Sector 61", "Noida Sector 52", "Noida Sector 34", "Noida City Centre", "Golf Course", "Botanical Garden", "Noida Sector 18", "Noida Sector 16", "Noida Sector 15", "New Ashok Nagar", "Mayur Vihar Extension", "Mayur Vihar I", "Akshardham", "Yamuna Bank", "Indraprastha", "Supreme Court", "Mandi House", "Barakhamba Road", "Rajiv Chowk", "Ramakrishna Ashram Marg", "Jhandewalan", "Karol Bagh", "Rajendra Place", "Patel Nagar", "Shadipur", "Kirti Nagar", "Moti Nagar", "Ramesh Nagar", "Rajouri Garden", "Tagore Garden", "Subhash Nagar", "Tilak Nagar", "Janakpuri East", "Janakpuri West", "Uttam Nagar East", "Uttam Nagar West", "Nawada", "Dwarka Mor", "Dwarka", "Dwarka Sector 14", "Dwarka Sector 13", "Dwarka Sector 12", "Dwarka Sector 11", "Dwarka Sector 10", "Dwarka Sector 9", "Dwarka Sector 8", "Dwarka Sector 21"]
+                },
+                green: {
+                    name: "Green Line",
+                    color: "#27ae60",
+                    stations: ["Brigadier Hoshiar Singh", "Badarpur Border", "Sarita Vihar", "Mohan Estate", "Tughlakabad", "Okhla", "Jasola Apollo", "Saket", "Malviya Nagar", "Hauz Khas", "Green Park", "AIIMS", "Race Course", "Jor Bagh", "INA", "Khan Market", "Jawaharlal Nehru Stadium", "Jangpura", "Lajpat Nagar", "Moolchand", "Kailash Colony", "Nehru Place", "Kalkaji Mandir", "Govind Puri", "Harkesh Nagar Okhla", "Jasola Vihar Shaheen Bagh", "Kalindi Kunj", "Okhla Vihar", "Jamia Millia Islamia", "Sukhdev Vihar", "NSIC", "Okhla NSIC", "Kalkaji Mandir"]
+                },
+                yellow: {
+                    name: "Yellow Line",
+                    color: "#f1c40f",
+                    stations: ["Samaypur Badli", "Rohini Sector 18", "Rohini Sector 19", "Haiderpur Badli Mor", "Jahangirpuri", "Adarsh Nagar", "Azadpur", "Model Town", "GTB Nagar", "Vishwavidyalaya", "Vidhan Sabha", "Civil Lines", "Kashmere Gate", "Chandni Chowk", "Chawri Bazar", "New Delhi", "Rajiv Chowk", "Patel Chowk", "Central Secretariat", "Udyog Bhawan", "Race Course", "Jor Bagh", "Dilli Haat INA", "AIIMS", "Green Park", "Hauz Khas", "Malviya Nagar", "Saket", "Qutab Minar", "Chhatarpur", "Sultanpur", "Ghitorni", "Arjan Garh", "Guru Dronacharya", "Sikandarpur", "MG Road", "IFFCO Chowk", "Millennium City Centre Gurugram", "Huda City Centre"]
+                },
+                pink: {
+                    name: "Pink Line",
+                    color: "#e91e63",
+                    stations: ["Majlis Park", "Azadpur", "Shalimar Bagh", "Netaji Subhash Place", "Shakurpur", "Punjabi Bagh West", "ESI Hospital", "Rajouri Garden", "Mayapuri", "Naraina Vihar", "Delhi Cantt", "Durgabai Deshmukh South Campus", "Sir M. Vishweshwaraiah Moti Bagh", "Bhikaji Cama Place", "Sarojini Nagar", "Dilli Haat INA", "South Extension", "Lajpat Nagar", "Vinobapuri", "Ashram", "Sarai Kale Khan", "Mayur Vihar I", "Mayur Vihar Pocket 1", "Trilokpuri", "East Vinod Nagar", "Mandawali", "IP Extension", "Anand Vihar", "Karkarduma", "Karkarduma Court", "Krishna Nagar", "East Azad Nagar", "Welcome", "Jaffrabad", "Maujpur", "Gokulpuri", "Johri Enclave", "Shiv Vihar"]
+                },
+                magenta: {
+                    name: "Magenta Line",
+                    color: "#9b59b6",
+                    stations: ["Janakpuri West", "Dabri Mor", "Dashrath Puri", "Palam", "Sadar Bazar Cantonment", "Terminal 1 IGI Airport", "Shankar Vihar", "Vasant Vihar", "Munirka", "RK Puram", "IIT Delhi", "Hauz Khas", "Panchsheel Park", "Chirag Delhi", "Greater Kailash", "Nehru Enclave", "Kalkaji Mandir", "Okhla NSIC", "Sukhdev Vihar", "Jamia Millia Islamia", "Okhla Vihar", "Jasola Vihar Shaheen Bagh", "Kalindi Kunj", "Okhla Bird Sanctuary", "Botanical Garden"]
+                },
+                violet: {
+                    name: "Violet Line",
+                    color: "#8e44ad",
+                    stations: ["Kashmere Gate", "Lal Qila", "Jama Masjid", "Delhi Gate", "ITO", "Mandi House", "Janpath", "Central Secretariat", "Khan Market", "JLN Stadium", "Jangpura", "Lajpat Nagar", "Moolchand", "Kailash Colony", "Nehru Place", "Kalkaji Mandir", "Govind Puri", "Okhla", "Jasola Apollo", "Sarita Vihar", "Mohan Estate", "Tughlakabad", "Badarpur", "Sarai", "NHPC Chowk", "Mewala Maharajpur", "Sector 28", "Badkal Mor", "Old Faridabad", "Neelam Chowk Ajronda", "Bata Chowk", "Escorts Mujesar", "Sant Surdas", "Raja Nahar Singh"]
+                },
+                orange: {
+                    name: "Orange Line (Airport Express)",
+                    color: "#e67e22",
+                    stations: ["New Delhi", "Shivaji Stadium", "Dhaula Kuan", "Delhi Aerocity", "Terminal 3 IGI Airport"]
+                },
+                gray: {
+                    name: "Gray Line",
+                    color: "#95a5a6",
+                    stations: ["Dwarka", "Nangli", "Najafgarh"]
+                }
+            },
+            interchanges: {
+                "Kashmere Gate": ["red", "yellow", "violet"],
+                "Rajiv Chowk": ["blue", "yellow"],
+                "Central Secretariat": ["yellow", "violet"],
+                "Mandi House": ["blue", "violet"],
+                "Hauz Khas": ["green", "yellow", "magenta"],
+                "Dilli Haat INA": ["yellow", "pink"],
+                "Kalkaji Mandir": ["green", "magenta", "violet"],
+                "Botanical Garden": ["blue", "magenta"],
+                "Rajouri Garden": ["blue", "pink"],
+                "Netaji Subhash Place": ["red", "pink"],
+                "Welcome": ["red", "pink"],
+                "Lajpat Nagar": ["green", "pink", "violet"],
+                "Mayur Vihar I": ["blue", "pink"],
+                "Janakpuri West": ["blue", "magenta"],
+                "Dwarka": ["blue", "gray"],
+                "New Delhi": ["yellow", "orange"],
+                "Azadpur": ["yellow", "pink"]
+            },
+            platforms: {
+                "Kashmere Gate": { "red": "1", "yellow": "2", "violet": "3" },
+                "Rajiv Chowk": { "blue": "1", "yellow": "2" },
+                "Central Secretariat": { "yellow": "1", "violet": "2" },
+                "Mandi House": { "blue": "1", "violet": "2" },
+                "Hauz Khas": { "green": "1", "yellow": "2", "magenta": "3" },
+                "Dilli Haat INA": { "yellow": "1", "pink": "2" },
+                "Kalkaji Mandir": { "green": "1", "magenta": "2", "violet": "3" },
+                "Botanical Garden": { "blue": "1", "magenta": "2" },
+                "Rajouri Garden": { "blue": "1", "pink": "2" },
+                "Netaji Subhash Place": { "red": "1", "pink": "2" },
+                "Welcome": { "red": "1", "pink": "2" },
+                "Lajpat Nagar": { "green": "1", "pink": "2", "violet": "3" },
+                "Mayur Vihar I": { "blue": "1", "pink": "2" },
+                "Janakpuri West": { "blue": "1", "magenta": "2" },
+                "Dwarka": { "blue": "1", "gray": "2" },
+                "New Delhi": { "yellow": "1", "orange": "2" },
+                "Azadpur": { "yellow": "1", "pink": "2" }
+            }
+        };
+
+        // Initialize the application
+        function initializeApp() {
+            populateStationDropdowns();
+            setupEventListeners();
+        }
+
+        // Populate station dropdowns
+        function populateStationDropdowns() {
+            const fromSelect = document.getElementById('fromStation');
+            const toSelect = document.getElementById('toStation');
+            
+            // Get all unique stations
+            const allStations = new Set();
+            Object.values(metroData.lines).forEach(line => {
+                line.stations.forEach(station => allStations.add(station));
+            });
+            
+            // Sort stations alphabetically
+            const sortedStations = Array.from(allStations).sort();
+            
+            // Populate dropdowns
+            sortedStations.forEach(station => {
+                const fromOption = new Option(station, station);
+                const toOption = new Option(station, station);
+                fromSelect.add(fromOption);
+                toSelect.add(toOption);
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('fromStation').addEventListener('change', function() {
+                updateLineInfo('fromLineInfo', this.value);
+            });
+            
+            document.getElementById('toStation').addEventListener('change', function() {
+                updateLineInfo('toLineInfo', this.value);
+            });
+        }
+
+        // Update line information for selected station
+        function updateLineInfo(elementId, station) {
+            const element = document.getElementById(elementId);
+            if (!station) {
+                element.textContent = '';
+                return;
+            }
+            
+            const lines = getStationLines(station);
+            if (lines.length > 0) {
+                const lineNames = lines.map(line => metroData.lines[line].name).join(', ');
+                element.textContent = `Available on: ${lineNames}`;
+            } else {
+                element.textContent = '';
+            }
+        }
+
+        // Get lines for a station
+        function getStationLines(station) {
+            const lines = [];
+            Object.entries(metroData.lines).forEach(([lineId, line]) => {
+                if (line.stations.includes(station)) {
+                    lines.push(lineId);
+                }
+            });
+            return lines;
+        }
+
+        // Find route between two stations
+        function findRoute() {
+            const fromStation = document.getElementById('fromStation').value;
+            const toStation = document.getElementById('toStation').value;
+            
+            if (!fromStation || !toStation) {
+                showError('Please select both boarding and destination stations.');
+                return;
+            }
+            
+            if (fromStation === toStation) {
+                showError('Boarding and destination stations cannot be the same.');
+                return;
+            }
+            
+            const route = calculateRoute(fromStation, toStation);
+            if (route) {
+                displayRoute(route);
+            } else {
+                showError('No route found between the selected stations.');
+            }
+        }
+
+        // Calculate the best routes (up to 2 options)
+        function calculateRoute(from, to) {
+            const fromLines = getStationLines(from);
+            const toLines = getStationLines(to);
+            const allRoutes = [];
+            
+            // Check for direct connections
+            const commonLines = fromLines.filter(line => toLines.includes(line));
+            for (const line of commonLines) {
+                const route = createDirectRoute(from, to, line);
+                if (route) {
+                    allRoutes.push(route);
+                }
+            }
+            
+            // Find routes with one interchange
+            for (const fromLine of fromLines) {
+                for (const toLine of toLines) {
+                    if (fromLine !== toLine) {
+                        const interchange = findInterchange(fromLine, toLine);
+                        if (interchange) {
+                            const route = createInterchangeRoute(from, to, fromLine, toLine, interchange);
+                            if (route) {
+                                allRoutes.push(route);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Sort routes by total time and return best 2
+            allRoutes.sort((a, b) => a.totalTime - b.totalTime);
+            return allRoutes.length > 0 ? allRoutes.slice(0, 2) : null;
+        }
+
+        // Create direct route
+        function createDirectRoute(from, to, lineId) {
+            const line = metroData.lines[lineId];
+            const fromIndex = line.stations.indexOf(from);
+            const toIndex = line.stations.indexOf(to);
+            
+            const stations = fromIndex < toIndex ? 
+                line.stations.slice(fromIndex, toIndex + 1) :
+                line.stations.slice(toIndex, fromIndex + 1).reverse();
+            
+            return {
+                type: 'direct',
+                totalStations: stations.length,
+                totalTime: (stations.length - 1) * 2, // 2 minutes per station
+                interchanges: 0,
+                segments: [{
+                    line: lineId,
+                    stations: stations,
+                    from: from,
+                    to: to
+                }]
+            };
+        }
+
+        // Find interchange station between two lines
+        function findInterchange(line1, line2) {
+            const line1Stations = metroData.lines[line1].stations;
+            const line2Stations = metroData.lines[line2].stations;
+            
+            for (const station of line1Stations) {
+                if (line2Stations.includes(station)) {
+                    return station;
+                }
+            }
+            return null;
+        }
+
+        // Create route with interchange
+        function createInterchangeRoute(from, to, fromLine, toLine, interchange) {
+            const route1 = createDirectRoute(from, interchange, fromLine);
+            const route2 = createDirectRoute(interchange, to, toLine);
+            
+            return {
+                type: 'interchange',
+                totalStations: route1.totalStations + route2.totalStations - 1,
+                totalTime: route1.totalTime + route2.totalTime + 3,
+                interchanges: 1,
+                interchangeStation: interchange,
+                segments: [
+                    route1.segments[0],
+                    route2.segments[0]
+                ]
+            };
+        }
+
+        // Display route results
+        function displayRoute(routes) {
+            const resultDiv = document.getElementById('routeResult');
+            const titleElement = document.getElementById('routeTitle');
+            const stepsElement = document.getElementById('routeSteps');
+            
+            // Handle single route (backward compatibility)
+            if (!Array.isArray(routes)) {
+                routes = [routes];
+            }
+            
+            // Update header
+            titleElement.textContent = `${document.getElementById('fromStation').value} → ${document.getElementById('toStation').value}`;
+            
+            // Clear previous steps
+            stepsElement.innerHTML = '';
+            
+            // If multiple routes, create side-by-side layout
+            if (routes.length > 1) {
+                const routesContainer = document.createElement('div');
+                routesContainer.style.cssText = `
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 30px;
+                    margin-top: 20px;
+                `;
+                
+                routes.forEach((route, routeIndex) => {
+                    const routeContainer = document.createElement('div');
+                    routeContainer.style.cssText = `
+                        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+                        border-radius: 20px;
+                        padding: 25px;
+                        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+                        border: 2px solid ${routeIndex === 0 ? '#10b981' : '#3b82f6'};
+                    `;
+                    
+                    // Route header
+                    const routeHeader = document.createElement('div');
+                    routeHeader.style.cssText = `
+                        text-align: center;
+                        margin-bottom: 20px;
+                        padding: 15px;
+                        background: ${routeIndex === 0 ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)'};
+                        color: white;
+                        border-radius: 15px;
+                        font-weight: 700;
+                        font-size: 1.2rem;
+                    `;
+                    routeHeader.innerHTML = `
+                        <div style="font-size: 1.4rem; margin-bottom: 8px;">Route ${routeIndex + 1}</div>
+                        <div style="display: flex; justify-content: space-around; font-size: 0.9rem; opacity: 0.9;">
+                            <span>⏱️ ${route.totalTime} mins</span>
+                            <span>🚉 ${route.totalStations} stations</span>
+                            <span>🔄 ${route.interchanges === 0 ? 'Direct' : route.interchanges + ' interchange'}</span>
+                        </div>
+                    `;
+                    routeContainer.appendChild(routeHeader);
+                    
+                    // Route segments
+                    const segmentsContainer = document.createElement('div');
+                    displayRouteSegments(route, segmentsContainer);
+                    routeContainer.appendChild(segmentsContainer);
+                    
+                    routesContainer.appendChild(routeContainer);
+                });
+                
+                stepsElement.appendChild(routesContainer);
+            } else {
+                // Single route display
+                const route = routes[0];
+                
+                // Single route stats
+                const statsDiv = document.createElement('div');
+                statsDiv.style.cssText = `
+                    display: flex;
+                    justify-content: center;
+                    gap: 25px;
+                    margin-bottom: 30px;
+                    padding: 20px;
+                    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(30, 64, 175, 0.05) 100%);
+                    border-radius: 20px;
+                `;
+                statsDiv.innerHTML = `
+                    <div class="stat"><span>⏱️</span><span>${route.totalTime} mins</span></div>
+                    <div class="stat"><span>🚉</span><span>${route.totalStations} stations</span></div>
+                    <div class="stat"><span>🔄</span><span>${route.interchanges === 0 ? 'Direct' : route.interchanges + ' interchange'}</span></div>
+                `;
+                stepsElement.appendChild(statsDiv);
+                
+                displayRouteSegments(route, stepsElement);
+            }
+            
+            // Show result
+            resultDiv.classList.add('show');
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Display route segments (extracted for reuse)
+        function displayRouteSegments(route, container) {
+            // Display route segments
+            route.segments.forEach((segment, segmentIndex) => {
+                // Create route section
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'route-section';
+                
+                // Section header
+                const headerDiv = document.createElement('div');
+                headerDiv.className = `section-header line-${segment.line}`;
+                headerDiv.innerHTML = `
+                    <img src="https://i.ibb.co/602MWkZ/logo.png" alt="Metro Logo" style="width: 24px; height: 24px; vertical-align: middle; border-radius: 4px; filter: brightness(0) invert(1);" onerror="this.style.display='none';">
+                    <span>${metroData.lines[segment.line].name}</span>
+                    <span style="margin-left: auto;">${segment.stations.length - 1} stops</span>
+                `;
+                sectionDiv.appendChild(headerDiv);
+                
+                // Stations list
+                const stationsDiv = document.createElement('div');
+                stationsDiv.className = 'stations-list';
+                
+                segment.stations.forEach((station, stationIndex) => {
+                    const stationDiv = document.createElement('div');
+                    stationDiv.className = 'station-item';
+                    
+                    // Add special classes for boarding/destination/junction
+                    if (station === segment.from && segmentIndex === 0) {
+                        stationDiv.classList.add('boarding-station');
+                    } else if (station === segment.to && segmentIndex === route.segments.length - 1) {
+                        stationDiv.classList.add('destination-station');
+                    } else if (metroData.interchanges[station]) {
+                        stationDiv.classList.add('junction-station');
+                    }
+                    
+                    // Station dot
+                    const dotDiv = document.createElement('div');
+                    dotDiv.className = `station-dot line-${segment.line}`;
+                    stationDiv.appendChild(dotDiv);
+                    
+                    // Station name
+                    const nameDiv = document.createElement('div');
+                    nameDiv.className = 'station-name';
+                    nameDiv.textContent = station;
+                    stationDiv.appendChild(nameDiv);
+                    
+                    // Station info
+                    const infoDiv = document.createElement('div');
+                    infoDiv.className = 'station-info';
+                    
+                    // Show platform info for boarding station or junction stations
+                    if ((station === segment.from && segmentIndex === 0) || metroData.interchanges[station]) {
+                        const stationInfoDiv = document.createElement('div');
+                        stationInfoDiv.className = metroData.interchanges[station] ? 'junction-info' : 'boarding-info';
+                        
+                        // Platform info
+                        if (metroData.platforms[station] && metroData.platforms[station][segment.line]) {
+                            const platformDiv = document.createElement('div');
+                            platformDiv.className = 'platform-info';
+                            platformDiv.textContent = `Platform ${metroData.platforms[station][segment.line]}`;
+                            stationInfoDiv.appendChild(platformDiv);
+                        }
+                        
+                        // Available lines for junction stations
+                        if (metroData.interchanges[station]) {
+                            const linesDiv = document.createElement('div');
+                            linesDiv.className = 'available-lines';
+                            const availableLines = metroData.interchanges[station]
+                                .map(line => metroData.lines[line].name)
+                                .join(', ');
+                            linesDiv.textContent = availableLines;
+                            stationInfoDiv.appendChild(linesDiv);
+                        }
+                        
+                        infoDiv.appendChild(stationInfoDiv);
+                    }
+                    
+                    stationDiv.appendChild(infoDiv);
+                    stationsDiv.appendChild(stationDiv);
+                });
+                
+                sectionDiv.appendChild(stationsDiv);
+                container.appendChild(sectionDiv);
+                
+                // Add interchange section if not the last segment
+                if (segmentIndex < route.segments.length - 1) {
+                    const interchangeDiv = document.createElement('div');
+                    interchangeDiv.className = 'interchange-section';
+                    
+                    const titleDiv = document.createElement('div');
+                    titleDiv.className = 'interchange-title';
+                    titleDiv.innerHTML = `
+                        <span>🔄</span>
+                        <span>Change trains at ${route.interchangeStation}</span>
+                    `;
+                    interchangeDiv.appendChild(titleDiv);
+                    
+                    const detailsDiv = document.createElement('div');
+                    detailsDiv.className = 'interchange-details';
+                    detailsDiv.innerHTML = `
+                        Switch from <strong>${metroData.lines[segment.line].name}</strong> 
+                        to <strong>${metroData.lines[route.segments[segmentIndex + 1].line].name}</strong>
+                        ${metroData.platforms[route.interchangeStation] ? 
+                            `<br>Go to Platform ${metroData.platforms[route.interchangeStation][route.segments[segmentIndex + 1].line]}` : ''}
+                    `;
+                    interchangeDiv.appendChild(detailsDiv);
+                    
+                    container.appendChild(interchangeDiv);
+                }
+            });
+        }
+
+        // Show error message
+        function showError(message) {
+            const resultDiv = document.getElementById('routeResult');
+            resultDiv.innerHTML = `<div class="error-message">${message}</div>`;
+            resultDiv.classList.add('show');
+        }
+
+        // Initialize app when page loads
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Delhi Metro Route Planner",
+        "description": "Find the fastest route between any two Delhi Metro stations with real-time directions and travel estimates",
+        "url": "https://yourdomain.com",
+        "applicationCategory": "TravelApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR"
+        },
+        "creator": {
+            "@type": "Organization",
+            "name": "RSQ Tech Pvt Ltd"
+        },
+        "keywords": "Delhi Metro, route planner, metro map, Delhi transport, metro stations",
+        "image": "https://i.ibb.co/602MWkZ/logo.png"
+    }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96c25fc54274897e',t:'MTc1NDY5MTM0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
